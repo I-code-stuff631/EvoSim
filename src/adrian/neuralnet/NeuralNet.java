@@ -14,7 +14,23 @@ import static adrian.Main.*;
 
 public class NeuralNet {
     SensoryNero[] sensoryNeros = new SensoryNero[numberOfSensoryNeurons];
-    ArrayList<InternalNero> InternalNeros = new ArrayList<>(numberOfInternalNeurons); //InternalNero[] InternalNeros = new InternalNero[numberOfInternalNeurons];
+    ArrayList<InternalNero> InternalNeros = new ArrayList<>(numberOfInternalNeurons) { //InternalNero[] InternalNeros = new InternalNero[numberOfInternalNeurons];
+        @Override
+        public boolean add(InternalNero internalNero) {
+            if(size()+1 >= numberOfActionNeurons) {
+                throw new ArrayIndexOutOfBoundsException("ArrayList overflow!");
+            }
+            return super.add(internalNero);
+        }
+
+        @Override
+        public void add(int index, InternalNero element) {
+            if(size()+1 >= numberOfActionNeurons) {
+                throw new ArrayIndexOutOfBoundsException("ArrayList overflow!");
+            }
+            super.add(index, element);
+        }
+    };
     //^This is an ArrayList because that way the nerons are all beside each other (meaning their raw positions can be used as values in the genes very easily) and ArrayList has easy remove functions that keep it compressed.
     //The others are not ArrayLists because they have different requirements.
     ActionNero[] ActionNeros = new ActionNero[numberOfActionNeurons];
@@ -160,40 +176,9 @@ public class NeuralNet {
         }
     }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//    private static class ActionNeroArr {
-//        private ActionNero[] CArr; //Compressed array
-//        public ActionNero[] A; //Normal array
-//
-//        ActionNeroArr(final short maxLength){
-//                A = new ActionNero[maxLength];
-//        }
-//
-//        void recompress(){ //Updates the compressed array with the new values in the normal array
-//            ArrayList<ActionNero> tmpArr = new ArrayList<>(A.length);
-//            for(final ActionNero actionNero : A){
-//                if(actionNero != null){
-//                    tmpArr.add(actionNero);
-//                }
-//            }
-//
-//            CArr = new ActionNero[tmpArr.size()];
-//            for(short x=0; x<tmpArr.size(); x++){
-//                CArr[x] = tmpArr.get(x);
-//            }
-//        }
-//
-//        ActionNero get(byte index){ //Gets a value from the compressed array
-//            return CArr[index];
-//        }
-//
-//    }
 
 
-
-
-} /////////////// End of object ///////////////
+} /////////////// End of object /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //    NeuralNet() {
 //        //////////////// Make random connections between the nerons (the number of conns are equal to the number of genes) ////////////////
