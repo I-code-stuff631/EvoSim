@@ -13,11 +13,10 @@ import java.util.Iterator;
 import static adrian.Main.*;
 
 public class NeuralNet {
-
-
-
     SensoryNero[] sensoryNeros = new SensoryNero[numberOfSensoryNeurons];
-    InternalNero[] InternalNeros = new InternalNero[numberOfInternalNeurons];
+    ArrayList<InternalNero> InternalNeros = new ArrayList<>(numberOfInternalNeurons); //InternalNero[] InternalNeros = new InternalNero[numberOfInternalNeurons];
+    //^This is an ArrayList because that way the nerons are all beside each other (meaning their raw positions can be used as values in the genes very easily) and ArrayList has easy remove functions that keep it compressed.
+    //The others are not ArrayLists because they have different requirements.
     ActionNero[] ActionNeros = new ActionNero[numberOfActionNeurons];
 
     public NeuralNet(final Gene[] genes){ //Constructs a new neural net based on the genes that are passed in
