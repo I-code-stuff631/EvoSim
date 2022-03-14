@@ -2,25 +2,27 @@ package adrian;
 
 import adrian.neuralnet.NeuralNet;
 
+import java.awt.*;
+
+import static adrian.Main.*;
+
 class Creature {
     short x;
     short y;
-    //color c = color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+    Color c = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
     //me.adrian.Gene[] genome = new me.adrian.Gene[numberOfGenes];
     NeuralNet neuralNet;
+    Gene[] genes = new Gene[numberOfGenes];
 
-//    me.adrian.Creature(final short x, final short y){
-//        neuralNet = new me.adrian.NeuralNet(); //<< Makes a neural net with random me.adrian.neuralnet.connections
-//        this.x = x;
-//        this.y = y;
-//    }
-
-    //me.adrian.Creature(final me.adrian.NeuralNet inheritedNeuralNet){
-    //  this.neuralNet = inheritedNeuralNet;
-    //  //////////////////////////////////
-    //  neuralNet.mutate();
-
-    //}
+    Creature(final short x, final short y){ //This is called when the creatures are first being created, it should initialize them with completely random values
+        this.x = x;
+        this.y = y;
+        /////////
+        for (short i=0; i<genes.length; i++){ //Fill the gene array with random genes
+            genes[i] = new Gene();
+        }
+        neuralNet = new NeuralNet(genes); //Construct a new neural net based on the random genes
+    }
 
     short lastUpdateCycle;
     private byte sinPeriod=30;
@@ -31,9 +33,6 @@ class Creature {
             move();
             lastUpdateCycle = numberOfStepsPassed;
         }
-        //for(final ActionNero actionNero : neuralNet.ActionNeros){
-        //  if(actionNero.neroNumber > 8/*If it is a oscillator nero*/)
-        //}
 
 
     }
@@ -76,7 +75,7 @@ class Creature {
         ////////////// Try moving with each possible neron in order //////////////
         for(final ActionNero possibleMoveActionNero : PossibleMoveActionNeros){
             if(possibleMoveActionNero.neroNumber == 0){ //Then its a move random neron (so you have to generate a random move value)
-                if( tryMove((byte)(Main.rand.nextInt(8)+1)) ){
+                if( tryMove((byte)(rand.nextInt(8)+1)) ){
                     break;
                     //return;
                 }
@@ -102,31 +101,31 @@ class Creature {
                 }
                 break;
             case 2: //Move up, right
-                if( (y-1 >= 0 && x+1 < creatures.length/*<< width*/) && creatures[x+1][y-1] == null){
+                if( (y-1 >= 0 && x+1 < numberOfSquaresAlongX/*<< width*/) && creatures[x+1][y-1] == null){
                     moveTo(x+1, y-1);
                     return true;
                 }
                 break;
             case 3: //Move right
-                if( (x+1 < creatures.length) && creatures[x+1][y] == null){
+                if( (x+1 < numberOfSquaresAlongX) && creatures[x+1][y] == null){
                     moveTo(x+1, y);
                     return true;
                 }
                 break;
             case 4: //Move right, down
-                if( (x+1 < creatures.length && y+1 < creatures[0].length/*<< height*/) && creatures[x+1][y+1] == null){
+                if( (x+1 < numberOfSquaresAlongX && y+1 < numberOfSquaresAlongY/*<< height*/) && creatures[x+1][y+1] == null){
                     moveTo(x+1, y+1);
                     return true;
                 }
                 break;
             case 5: //Move down
-                if( (y+1 < creatures[0].length) && creatures[x][y+1] == null ){
+                if( (y+1 < numberOfSquaresAlongY) && creatures[x][y+1] == null ){
                     moveTo(x, y+1);
                     return true;
                 }
                 break;
             case 6: //Move down, left
-                if( (y+1 < creatures[0].length && x-1 >= 0) && creatures[x-1][y+1] == null){
+                if( (y+1 < numberOfSquaresAlongY && x-1 >= 0) && creatures[x-1][y+1] == null){
                     moveTo(x-1, y+1);
                     return true;
                 }

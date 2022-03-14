@@ -5,7 +5,7 @@ import adrian.neuralnet.connections.ConToInternal;
 
 import java.util.ArrayList;
 
-class SensoryNero {
+public class SensoryNero {
     byte senseID; //Holds the type of sensory neron
 
     ArrayList<ConToInternal> connectionsToInternalNerons = new ArrayList<>();

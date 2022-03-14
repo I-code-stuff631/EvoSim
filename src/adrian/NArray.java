@@ -1,8 +1,8 @@
 package adrian;
+import adrian.neuralnet.neurons.ActionNero;
+import adrian.neuralnet.neurons.SensoryNero;
 
-import java.util.ArrayList;
-
-public class NArray<T> { //Neron array (designed to be fast for storing neurons in the neural network)
+public class NArray<ActionNero, SensoryNero> { //Neron array (designed to be fast for storing neurons in the neural network)
     private T[] CArr; //Compressed array
     T[] A; //normal array
 

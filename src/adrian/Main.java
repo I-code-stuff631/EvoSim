@@ -21,20 +21,26 @@ public class Main extends JPanel {
     public static final short height = 600;
     ///////////////////////
 
-    final private JFrame frame;
     private final static short sizeRatio = (short) Math.pow(2, sizeOfGrid);
-    private final static short /*widthDevSizeRatio*/numberOfSquaresAlongX = (short) (width / sizeRatio);
-    private final static short /*heightDevSizeRatio*/numberOfSquaresAlongY = (short) (height / sizeRatio);
+    public final static short /*widthDevSizeRatio*/numberOfSquaresAlongX = (short) (width / sizeRatio);
+    public final static short /*heightDevSizeRatio*/numberOfSquaresAlongY = (short) (height / sizeRatio);
+    private final static short totalNumberOfSquares = (short)(numberOfSquaresAlongX*numberOfSquaresAlongY);
     public final static Random rand = new Random(1110236400L); //ThreadLocalRandom rand = ThreadLocalRandom.current();
 
-    //Creature[][] creatures;
+    final private JFrame frame;
+    Creature[][] creatures = new Creature[numberOfSquaresAlongX][numberOfSquaresAlongY];
 
     public static void main(String[] args) {
         assert (numberOfSensoryNeurons <= 128) && (numberOfSensoryNeurons >= 1);
         assert (numberOfActionNeurons <= 128) && (numberOfActionNeurons >= 1);
 
+        if(numberOfCreatures >= totalNumberOfSquares){
+            System.out.println("Total number of creatures is more than or equal to the total number of squares!");
+            System.exit(0);
+        }
+
         Main window = new Main();
-        //Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(window::repaint, 0, Math.round(1000000f / frameRate), TimeUnit.MICROSECONDS);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(window::repaint, 0, Math.round(1000000f / frameRate), TimeUnit.MICROSECONDS);
     }
 
     public Main() {
@@ -47,14 +53,7 @@ public class Main extends JPanel {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        final short totalNumberOfSquares = (short)(numberOfSquaresAlongX*numberOfSquaresAlongY);
-        if(numberOfCreatures >= totalNumberOfSquares){
-            System.out.println("Total number of creatures is more than or equal to the total number of squares!");
-            System.exit(0);
-        }
-
-       // creatures = new me.adrian.Creature[numberOfSquaresAlongX][numberOfSquaresAlongY];
-
+        ///////////////////////////////////////////
         short creaturesToAdd = numberOfCreatures;
         while(creaturesToAdd > 0){ // Add random creatures to the board randomly
             for(short x=0; x<numberOfSquaresAlongX; x++){
@@ -63,13 +62,14 @@ public class Main extends JPanel {
                         creatures[x][y] = new Creature(x, y); //<< Adds a creature with random genome
                         creaturesToAdd--;
                         if(creaturesToAdd <= 0){
-                            println("Generation: 0");// + genNumber);
+                            System.out.println("Generation: 0");// + genNumber);
                             return;
                         }
                     }
                 }
             }
         }
+        /////////////////////////////////////////
 
 
         /*frame.addComponentListener(new ComponentAdapter() {
