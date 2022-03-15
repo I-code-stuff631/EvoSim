@@ -43,28 +43,14 @@ public class NeuralNet {
                     .filter(g -> g.parentID == aByte)
                     .toArray(Gene[]::new);
             //////////////////////////////////////
-            for(final Gene connec : rawAsocConnections){
-                //// Identify the type of parent node and child node. Then construct the appropriate connection for them and add it ////
+            for (final Gene connec : rawAsocConnections) {
+                //// Identifies the type of child node, then constructs a connection and adds it ////
 
-                if(connec.isSensory) { //The parent node is a sensoryNeron
-                    final SensoryNero parent = sensoryNeros.get(connec.parentID); //SENSORY NERON
-
-                    /// Identify the type of child node ///
-                    if(connec.isAction){ //The child node is a actionNeron
-                        parent.addConnection( new ConToAction(actionNeros.get(connec.childID), connec.weight) );
-                    }else{ //The child node is a internalNeron
-                        parent.addConnection( new ConToInternal(internalNeros.get(connec.childID), connec.weight) );
-                    }
-
-                }else { //The parent node is a internalNeron
-                    final InternalNero parent = internalNeros.get(connec.parentID); //INTERNAL NERON
-
-                    /// Identify the type of child node ///
-                    if(connec.isAction){ //The child node is a actionNeron
-                        parent.addConnection( new ConToAction(actionNeros.get(connec.childID), connec.weight) );
-                    }else{ //The child node is a internalNeron
-                        parent.addConnection( new ConToInternal(internalNeros.get(connec.childID), connec.weight) );
-                    }
+                /// Identify the type of child node ///
+                if (connec.isAction) { //The child node is a actionNeron
+                    sensoryNero.addConnection(new ConToAction(actionNeros.get(connec.childID), connec.weight));
+                } else { //The child node is a internalNeron
+                    sensoryNero.addConnection(new ConToInternal(internalNeros.get(connec.childID), connec.weight));
                 }
             }
         });
