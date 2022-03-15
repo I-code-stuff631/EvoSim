@@ -8,7 +8,6 @@ import adrian.neuralnet.neurons.InternalNero;
 import adrian.neuralnet.neurons.SensoryNero;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static adrian.Main.*;
 
@@ -98,104 +97,114 @@ public class NeuralNet {
 
     }
 
-//    void update(final short x, final short y, byte sinPeriod, byte cosPeriod/*Creature pos along the x and y axises*/) {
-//        actionNeros.values().forEach(actionNero -> actionNero.sum = 0); //Reset all the action neros
-//
-//        for (final SensoryNero sensoryNero : SensoryNeros) {
-//            if (sensoryNero != null) {
-//                switch (sensoryNero.neronNumber) {
-//                    case 0: //Distance to either of the y-borders (small distance small output, large distance large output) (large distance defined as the middle, small distance defined by being as close to one of the sides as possible)
-//                        //distance from the middle: Math.abs((creatures[0].length/2f)-y)
-//                        sensoryNero.produce(1f - (Math.abs((creatures[0].length / 2f) - y) / (creatures[0].length / 2f)));
-//                        break;
-//                    case 1: //Absoulte y location (Farthest from the middle max value, closests to the middle min value)
-//                        sensoryNero.produce(Math.abs((creatures[0].length / 2f) - y) / (creatures[0].length / 2f));
-//                        break;
-//                    case 2: //Distance to either of the x-borders (same behavior as case 0)
-//                        sensoryNero.produce(1f - (Math.abs((creatures.length / 2f) - x) / (creatures.length / 2f)));
-//                        break;
-//                    case 3: //Absoulte x location (same behavior as case 1)
-//                        sensoryNero.produce((Math.abs((creatures.length / 2f) - x) / (creatures.length / 2f)));
-//                        break;
-//                    case 4: //The creatures age (outputs highest at last cycle, lowest at first)
-//                        sensoryNero.produce(numberOfStepsPassed / numberOfSteps);
-//                        break;
-//                    case 5: //Random input
-//                        sensoryNero.produce((float) rand.nextDouble()/*By truncating the output to a float you can actually get values between 1 and 0*/);
-//                        break;
-//                    ////// Blockage me.adrian.neuralnet.connections.nerons //////
-//                    case 6: //Blockage above
-//                        sensoryNero.produce(((y - 1 < 0) || (creatures[x][y - 1] != null)) ? (1f) : (0f));
-//                        break;
-//                    case 7: //Blockage above and to the right
-//                        sensoryNero.produce(!((y - 1 >= 0 && x + 1 < creatures.length) && (creatures[x + 1][y - 1] == null)) ? (1f) : (0f));
-//                        break;
-//                    case 8: //Blockage to the right
-//                        sensoryNero.produce(!((x + 1 < creatures.length) && (creatures[x + 1][y] == null)) ? (1f) : (0f));
-//                        break;
-//                    case 9: //Blockage to the right and down
-//                        sensoryNero.produce(!((x + 1 < creatures.length && y + 1 < creatures[0].length) && creatures[x + 1][y + 1] == null) ? (1f) : (0f));
-//                        break;
-//                    case 10: //Blockage below
-//                        sensoryNero.produce(!((y + 1 < creatures[0].length) && creatures[x][y + 1] == null) ? (1f) : (0f));
-//                        break;
-//                    case 11: //Blockage below and to the left
-//                        sensoryNero.produce(!((y + 1 < creatures[0].length && x - 1 >= 0) && creatures[x - 1][y + 1] == null) ? (1f) : (0f));
-//                        break;
-//                    case 12: //Blockage to the left
-//                        sensoryNero.produce(!((x - 1 >= 0) && creatures[x - 1][y] == null) ? (1f) : (0f));
-//                        break;
-//                    case 13: //Blockage to the left and up
-//                        sensoryNero.produce(!((x - 1 >= 0 && y - 1 >= 0) && creatures[x - 1][y - 1] == null) ? (1f) : (0f));
-//                        break;
-//                    case 14: //Blockage all around the creature (if the eight spaces around it are blocked then it outputs a 1, if only 4 then it outputs a .5)
-//                        byte blockedSpaces = 0;
-//                        if (((y - 1 < 0) || (creatures[x][y - 1] != null))) //Square above is blocked (6)
-//                            blockedSpaces++;
-//                        if (!((y - 1 >= 0 && x + 1 < creatures.length) && (creatures[x + 1][y - 1] == null))) //Square above and to the right is blocked (7)
-//                            blockedSpaces++;
-//                        if (!((x + 1 < creatures.length) && (creatures[x + 1][y] == null))) //Square to the right is blocked (8)
-//                            blockedSpaces++;
-//                        if (!((x + 1 < creatures.length && y + 1 < creatures[0].length) && creatures[x + 1][y + 1] == null)) //Square to the right and down is blocked (9)
-//                            blockedSpaces++;
-//                        if (!((y + 1 < creatures[0].length) && creatures[x][y + 1] == null)) //Square below is blocked (10)
-//                            blockedSpaces++;
-//                        if (!((y + 1 < creatures[0].length && x - 1 >= 0) && creatures[x - 1][y + 1] == null)) //Square below and to the left is blocked (11)
-//                            blockedSpaces++;
-//                        if (!((x - 1 >= 0) && creatures[x - 1][y] == null)) //Square to the left is blocked (12)
-//                            blockedSpaces++;
-//                        if (!((x - 1 >= 0 && y - 1 >= 0) && creatures[x - 1][y - 1] == null)) //Square to the left and up is blocked (13)
-//                            blockedSpaces++;
-//                        sensoryNero.produce(blockedSpaces / 8);
-//                        break;
-//                    /////////////////////////////
-//                    /////// Oscillators ///////
-//                    case 15: //Sine wave
-//                        sensoryNero.produce((float) (.5 * Math.sin(numberOfStepsPassed * (Math.PI / sinPeriod)) + .5));
-//                        break;
-//                    case 16: //Cos wave
-//                        sensoryNero.produce((float) (.5 * Math.sin(numberOfStepsPassed * ((Math.PI * 2) / cosPeriod)) + .5));
-//                        break;
-//                    ///////////////////////////
-//                }
-//            }
-//        }
-//
-//        //////////////////////////////////////////// Internal neros ////////////////////////////////////////////
-//        for (final InternalNero internalNero : InternalNeros) {
-//            if (internalNero != null) {
-//                if (internalNero.sum == Float.NaN) {
-//                    println("Found NaN internal neron");
-//                }
-//                internalNero.prepare();
-//            }
-//        }
-//        for (final InternalNero internalNero : InternalNeros) {
-//            if (internalNero != null) {
-//                internalNero.output();
-//            }
-//        }
-//    }
+    public void update(final short x, final short y) {
+
+        ////////////////// Gets cos and sin periods //////////////////
+        //Action ID 9 is sine period controller and ID 10 is cos period controller
+        double sinPeriod = defaultSinPeriod;
+        ActionNero sinPeriodController = actionNeros.get((byte)9);
+        if(sinPeriodController != null){
+            sinPeriod = ( (defaultSinPeriod-0.01) * sinPeriodController.fireProbability()); //Sin period can at min be 0.01
+        }
+
+        double cosPeriod = defaultCosPeriod;
+        ActionNero cosPeriodController = actionNeros.get((byte)10);
+        if(cosPeriodController != null){
+            cosPeriod = ( (defaultCosPeriod-0.01) * cosPeriodController.fireProbability()); //Cos period can at min be 0.01
+        }
+        //////////////////////////////////////////////////////////////
+
+        actionNeros.values().forEach(actionNero -> actionNero.sum = 0); //Reset all the action neros
+
+        //////////////////////////////////////////////////////////////
+
+        for(final SensoryNero sensoryNero : sensoryNeros.values()){
+            float presentDistanceFromMiddleAlongX = Math.abs((numberOfSquaresAlongX/2f)-x)/(numberOfSquaresAlongX/2f);
+            float presentDistanceFromMiddleAlongY = Math.abs((numberOfSquaresAlongY/2f)-y)/(numberOfSquaresAlongY/2f);
+            switch (sensoryNero.senseID) {
+                case 0: //Distance to either of the y-borders (small distance small output, large distance large output) (large distance defined as the middle, small distance defined by being as close to one of the sides as possible)
+                    //distance from the middle: Math.abs((creatures[0].length/2f)-y)
+                    sensoryNero.produce(1f - presentDistanceFromMiddleAlongY);
+                    break;
+                case 1: //Absolute y location (Farthest from the middle max value, closest to the middle min value)
+                    sensoryNero.produce(presentDistanceFromMiddleAlongY);
+                    break;
+                case 2: //Distance to either of the x-borders (same behavior as case 0)
+                    sensoryNero.produce(1f - presentDistanceFromMiddleAlongX);
+                    break;
+                case 3: //Absolute x location (same behavior as case 1)
+                    sensoryNero.produce(presentDistanceFromMiddleAlongX);
+                    break;
+                case 4: //The creatures age (outputs highest at last cycle, lowest at first)
+                    sensoryNero.produce((float) numberOfStepsPassed/ numberOfStepsPerCycle);
+                    break;
+                case 5: //Random input
+                    sensoryNero.produce((float) rand.nextDouble()/*By truncating the output to a float you can actually get values between 1 and 0*/);
+                    break;
+                ////// Blockage nerons //////
+                case 6: //Blockage above
+                    sensoryNero.produce(((y - 1 < 0) || (creatures[x][y - 1] != null)) ? (1f) : (0f));
+                    break;
+                case 7: //Blockage above and to the right
+                    sensoryNero.produce(!((y - 1 >= 0 && x + 1 < numberOfSquaresAlongX) && (creatures[x + 1][y - 1] == null)) ? (1f) : (0f));
+                    break;
+                case 8: //Blockage to the right
+                    sensoryNero.produce(!((x + 1 < numberOfSquaresAlongX) && (creatures[x + 1][y] == null)) ? (1f) : (0f));
+                    break;
+                case 9: //Blockage to the right and down
+                    sensoryNero.produce(!((x + 1 < numberOfSquaresAlongX && y + 1 < numberOfSquaresAlongY) && creatures[x + 1][y + 1] == null) ? (1f) : (0f));
+                    break;
+                case 10: //Blockage below
+                    sensoryNero.produce(!((y + 1 < numberOfSquaresAlongY) && creatures[x][y + 1] == null) ? (1f) : (0f));
+                    break;
+                case 11: //Blockage below and to the left
+                    sensoryNero.produce(!((y + 1 < numberOfSquaresAlongY && x - 1 >= 0) && creatures[x - 1][y + 1] == null) ? (1f) : (0f));
+                    break;
+                case 12: //Blockage to the left
+                    sensoryNero.produce(!((x - 1 >= 0) && creatures[x - 1][y] == null) ? (1f) : (0f));
+                    break;
+                case 13: //Blockage to the left and up
+                    sensoryNero.produce(!((x - 1 >= 0 && y - 1 >= 0) && creatures[x - 1][y - 1] == null) ? (1f) : (0f));
+                    break;
+                case 14: //Blockage all around the creature (if the eight spaces around it are blocked then it outputs a 1, if only 4 then it outputs a .5 etc)
+                    byte blockedSpaces = 0;
+                    if (((y - 1 < 0) || (creatures[x][y - 1] != null))) //Square above is blocked (6)
+                        blockedSpaces++;
+                    if (!((y - 1 >= 0 && x + 1 < numberOfSquaresAlongX) && (creatures[x + 1][y - 1] == null))) //Square above and to the right is blocked (7)
+                        blockedSpaces++;
+                    if (!((x + 1 < numberOfSquaresAlongX) && (creatures[x + 1][y] == null))) //Square to the right is blocked (8)
+                        blockedSpaces++;
+                    if (!((x + 1 < numberOfSquaresAlongX && y + 1 < numberOfSquaresAlongY) && creatures[x + 1][y + 1] == null)) //Square to the right and down is blocked (9)
+                        blockedSpaces++;
+                    if (!((y + 1 < numberOfSquaresAlongY) && creatures[x][y + 1] == null)) //Square below is blocked (10)
+                        blockedSpaces++;
+                    if (!((y + 1 < numberOfSquaresAlongY && x - 1 >= 0) && creatures[x - 1][y + 1] == null)) //Square below and to the left is blocked (11)
+                        blockedSpaces++;
+                    if (!((x - 1 >= 0) && creatures[x - 1][y] == null)) //Square to the left is blocked (12)
+                        blockedSpaces++;
+                    if (!((x - 1 >= 0 && y - 1 >= 0) && creatures[x - 1][y - 1] == null)) //Square to the left and up is blocked (13)
+                        blockedSpaces++;
+                    sensoryNero.produce(blockedSpaces/8f);
+                    break;
+                /////////////////////////////
+                /////// Oscillators ///////
+                case 15: //Sine wave
+                    sensoryNero.produce((float) (.5 * Math.sin(numberOfStepsPassed * (Math.PI / sinPeriod)) + .5));
+                    break;
+                case 16: //Cos wave
+                    sensoryNero.produce((float) (.5 * Math.sin(numberOfStepsPassed * ((Math.PI * 2) / cosPeriod)) + .5));
+                    break;
+                ///////////////////////////
+            }
+        }
+
+        //////////////////////////////////////////// Internal neros ////////////////////////////////////////////
+
+        //Call prepare and output on each internal neron
+        internalNeros.values().forEach(InternalNero::prepare);
+        internalNeros.values().forEach(InternalNero::output);
+
+    }
 
     public byte getMove(final short x, final short y){
         ///// Get possible directions the creature can move this cycle /////

@@ -16,7 +16,7 @@ public class ActionNero {
         sum += addAmount;
     }
 
-    public float fireProbability(){
+    public float fireProbability(){ //Could and also should be seen as output
         return (float)Math.tanh(sum);
     }
 

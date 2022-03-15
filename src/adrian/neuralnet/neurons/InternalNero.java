@@ -16,7 +16,7 @@ public class InternalNero {
         sum += addAmount;
     }
 
-    void prepare(){ //This would be called from outside (Before output)
+    public void prepare(){ //This would be called from outside (Before output)
         //////////// Call all connections that loopback to this neron ////////////
         float tmpSum = sum;
         for(final ConToInternal connectionToInternalNeron : connectionsToInternalNerons){
@@ -24,7 +24,6 @@ public class InternalNero {
                 connectionToInternalNeron.send( (float)Math.tanh(tmpSum) );
             }
         }
-        //tmpSum = Float.NaN;
         ///////////// Call all other internal neron connections /////////////
         for(final ConToInternal connectionToInternalNeron : connectionsToInternalNerons){
             if(connectionToInternalNeron.neron != this){
@@ -35,7 +34,7 @@ public class InternalNero {
 
     }
 
-    void output(){ //This would be called from outside (After prepare)
+    public void output(){ //This would be called from outside (After prepare)
         for(final ConToAction connectionToActionNeron : connectionsToActionNerons){
             connectionToActionNeron.send( (float)Math.tanh(sum) );
         }

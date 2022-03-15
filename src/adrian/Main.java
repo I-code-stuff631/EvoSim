@@ -10,15 +10,17 @@ public class Main extends JPanel {
     /////// Options ///////
     final static short numberOfCreatures = 10;
     public static final short numberOfGenes/*numberOfConnections*/ = 4;
-    public static final short numberOfSensoryNeurons = 11;
+    public static final short numberOfSensoryNeurons = 17;
     public static final short numberOfInternalNeurons = 1;
-    public static final short numberOfActionNeurons = 4;
+    public static final short numberOfActionNeurons = 9/*< For moving*/+2/*< Oscillator period controllers*/;
     //final static float mutationChance = 0.001;
-    final static short numberOfSteps = 300;
+    public static final short numberOfStepsPerCycle = 300;
     private static final short frameRate = 24;
     public static final short sizeOfGrid = 3;
     public static final short width = 600;
     public static final short height = 600;//-44;
+    public static final byte defaultSinPeriod = 30;
+    public static final byte defaultCosPeriod = 60;
     ///////////////////////
 
     private final static short sizeRatio = (short) Math.pow(2, sizeOfGrid);
@@ -61,17 +63,6 @@ public class Main extends JPanel {
         }
         /////////////////////////////////////////
 
-        short cc=0;
-        for(short x=0; x<numberOfSquaresAlongX; x++){
-            for(short y=0; y<numberOfSquaresAlongY; y++) {
-                if(creatures[x][y] != null){
-                    cc++;
-                }
-            }
-        }
-        System.out.println(cc);
-
-
         Main window = new Main();
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(window::repaint, 0, Math.round(1000000f / frameRate), TimeUnit.MICROSECONDS);
     }
@@ -104,27 +95,54 @@ public class Main extends JPanel {
     public void paint(Graphics g) {
         super.paint(g); //Clears the last frames shit
 
-        for(short x=0; x<numberOfSquaresAlongX; x++){
-            for(short y=0; y<numberOfSquaresAlongY; y++){
-                if(creatures[x][y] != null){ //Update each creature
-                    creatures[x][y].update();
+//        if(numberOfStepsPassed >= numberOfSteps) {
+
+            for (short x = 0; x < numberOfSquaresAlongX; x++) {
+                for (short y = 0; y < numberOfSquaresAlongY; y++) {
+                    if (creatures[x][y] != null) { //Update each creature
+                        creatures[x][y].update();
+                    }
                 }
             }
-        }
 
-        for(short x=0; x<numberOfSquaresAlongX; x++){
-            for(short y=0; y<numberOfSquaresAlongY; y++){
-                //g.setColor(Color.GREEN);
-                //g.drawRect(x*sizeRatio, y*sizeRatio, sizeRatio, sizeRatio);
-                if(creatures[x][y] != null){
-                    g.setColor(creatures[x][y].c); //fill(creatures[x][y].c);
-                    g.fillOval(sizeRatio*x, sizeRatio*y, sizeRatio, sizeRatio);
-                    //fill(0);
+            for (short x = 0; x < numberOfSquaresAlongX; x++) {
+                for (short y = 0; y < numberOfSquaresAlongY; y++) {
+                    if (creatures[x][y] != null) {
+                        g.setColor(creatures[x][y].c); //fill(creatures[x][y].c);
+                        g.fillOval(sizeRatio * x, sizeRatio * y, sizeRatio, sizeRatio);
+                        //fill(0);
+                    }
                 }
             }
-        }
-        //g.drawRect(width-16,0,sizeRatio,sizeRatio);
 
+            numberOfStepsPassed++;
+//        }else{ //New generation
+//            numberOfStepsPassed = 0;
+//
+//            ///////////////////////// Apply the selection criteria /////////////////////////
+//            ArrayList<NeuralNet> survivingCreaturesNeuralNets = new ArrayList<>((int) Math.ceil(numberOfCreatures / 2f));
+//            for (short x = 0; x < numberOfSquaresAlongX; x++) {
+//                for (short y = 0; y < numberOfSquaresAlongY; y++) {
+//                    if (creatures[x][y] != null) {
+//                        if (x > (numberOfSquaresAlongX / 2) /*<< The creature is on the right half of the screen*/) {
+//                            survivingCreaturesNeuralNets.add(creatures[x][y].neuralNet);
+//                        }
+//                        creatures[x][y] = null;
+//                    }
+//                }
+//            }
+//
+//            /////////////// Re-populate the world //////////////////
+//            ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
+//
+//            survivingCreaturesNeuralNets.forEach(n -> {
+//            newCreatures.add(new Creature());
+//            });
+//
+//
+//
+//
+//
     }
 
     public static int intInRange(int min, int max){

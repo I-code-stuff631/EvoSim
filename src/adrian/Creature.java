@@ -65,13 +65,21 @@ class Creature {
         neuralNet = new NeuralNet(genes); //Construct a new neural net based on the random genes
     }
 
+    public Creature(final NeuralNet neuralNet, final Gene[] genes){
 
+    }
+
+
+    short stepUpdateWasLastCalled=-1;
     void update(){
-        //if(lastUpdateCycle != numberOfStepsPassed){
-         //   neuralNet.update(x, y, sinPeriod, cosPeriod);
+        if(stepUpdateWasLastCalled != numberOfStepsPassed){
+            neuralNet.update(x, y);
             move(neuralNet.getMove(x, y));
-         //   lastUpdateCycle = numberOfStepsPassed;
-       // }
+
+
+
+            stepUpdateWasLastCalled = numberOfStepsPassed;
+        }
 
 
     }
