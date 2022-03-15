@@ -35,7 +35,7 @@ public class NeuralNet {
         }
         //////////////////////////////////// Add the connections between the neurons ////////////////////////////////////
 
-        ////////////////////// For each neron that can have a connection //////////////////////
+        ////////////////////// For each neron that can have a connection (ie. parent neurons) //////////////////////
 
         sensoryNeros.forEach((aByte, sensoryNero) -> { //Sensory neurons
             Gene[] rawAsocConnections = Arrays.stream(genes) //Get all the connections associated with the current sensory neron
@@ -54,6 +54,25 @@ public class NeuralNet {
                 }
             }
         });
+
+        internalNeros.forEach((aByte, internalNero) -> { //Internal neurons
+            Gene[] rawAsocConnections = Arrays.stream(genes) //Get all the connections associated with the current internal neron
+                    .filter(g -> !g.isSensory)
+                    .filter(g -> g.parentID == aByte)
+                    .toArray(Gene[]::new);
+            //////////////////////////////////////
+            for (final Gene connec : rawAsocConnections) {
+                //// Identifies the type of child node, then constructs a connection and adds it ////
+
+                /// Identify the type of child node ///
+                if (connec.isAction) { //The child node is a actionNeron
+                    internalNero.addConnection(new ConToAction(actionNeros.get(connec.childID), connec.weight));
+                } else { //The child node is a internalNeron
+                    internalNero.addConnection(new ConToInternal(internalNeros.get(connec.childID), connec.weight));
+                }
+            }
+        });
+
 
 
 
