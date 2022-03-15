@@ -7,14 +7,16 @@ import adrian.neuralnet.connections.ConToInternal;
 import java.util.ArrayList;
 
 public class SensoryNero {
-    //byte senseID; //Holds the type of sensory neron
+    final public byte senseID; //Holds the type of sensory neron
+    // ^^ This is final because if it was not it would be possible for the ID in the hashmap to not equal
+    // the ID in the neron.
 
     public ArrayList<ConToInternal> connectionsToInternalNerons = new ArrayList<>();
     public ArrayList<ConToAction> connectionsToActionNerons = new ArrayList<>();
 
-//    SensoryNero(final byte neronNumber){
-//        this.senseID = neronNumber;
-//    }
+    public SensoryNero(final byte neronNumber){
+        this.senseID = neronNumber;
+    }
 
     void produce(final float rawOutput){ // This would be called from outside
         for(final ConToInternal connectionToInternalNeron : connectionsToInternalNerons){
