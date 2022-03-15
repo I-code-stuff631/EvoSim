@@ -18,7 +18,7 @@ public class SensoryNero {
         this.senseID = neronNumber;
     }
 
-    void produce(final float rawOutput){ // This would be called from outside
+    public void produce(final float rawOutput){ // This would be called from outside
         for(final ConToInternal connectionToInternalNeron : connectionsToInternalNerons){
             connectionToInternalNeron.send(rawOutput);
         }

@@ -5,7 +5,7 @@ import adrian.neuralnet.neurons.ActionNero;
 import static adrian.Main.rand;
 
 public class ConToAction {
-    ActionNero neron;
+    public ActionNero neron;
     float weight;
 
     public ConToAction(final ActionNero childNeron, final float weight){

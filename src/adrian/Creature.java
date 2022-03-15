@@ -45,9 +45,9 @@ class Creature {
         firstScalingConstant = (127d/numberOfActionNeurons);
         for(Gene gene : genes){
             if(gene.isAction){
-                blue += gene.parentID*firstScalingConstant + Byte.MAX_VALUE + 1;
+                blue += gene.childID*firstScalingConstant + Byte.MAX_VALUE + 1;
             }else{
-                blue += gene.parentID*secScalingConstant;
+                blue += gene.childID*secScalingConstant;
             }
         }
         blue /= genes.length; //Average blue

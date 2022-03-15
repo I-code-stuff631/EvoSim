@@ -81,12 +81,13 @@ public class NeuralNet {
 
         sensoryNeros.values()
                 .stream()
-                .map(s -> s.connectionsToInternalNerons) //Gets all the connectionToInternalNeron arrays
-                .forEach(conToInternals -> { //For each internalNeronArray
-                    conToInternals.stream()
-                            .filter(conToInternal -> conToInternal.neron.sum == Float.NEGATIVE_INFINITY)
-                            //^^ Gets all useless connections that the array contains ^^
-                            .forEach(conToInternals::remove); //Removes each useless connection
+                .map(s -> s.connectionsToActionNerons) //Gets all the connectionToInternalNeron arrays
+                .forEach(conToActions -> { //For each array of connections
+                    for(short x=0; x<conToActions.size(); x++){
+                       if(conToActions.get(x).neron.sum == Float.NEGATIVE_INFINITY){
+                           conToActions.remove(x);
+                       }
+                    }
                 });
 
         sensoryNeros.forEach((aByte, sensoryNero) -> {
@@ -97,14 +98,8 @@ public class NeuralNet {
 
     }
 
-
-
 //    void update(final short x, final short y, byte sinPeriod, byte cosPeriod/*Creature pos along the x and y axises*/) {
-//        for (final ActionNero actionNero : ActionNeros) {
-//            if (actionNero != null) {
-//                actionNero.sum = 0; //Reset all the action neros
-//            }
-//        }
+//        actionNeros.values().forEach(actionNero -> actionNero.sum = 0); //Reset all the action neros
 //
 //        for (final SensoryNero sensoryNero : SensoryNeros) {
 //            if (sensoryNero != null) {

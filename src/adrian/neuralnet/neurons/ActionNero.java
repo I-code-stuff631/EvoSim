@@ -6,7 +6,7 @@ public class ActionNero {
     final public byte actionID; //Holds the type of action neron
     // ^^ This is final because if it was not it would be possible for the ID in the hashmap to not equal
     // the ID in the neron.
-    float sum;
+    public float sum;
 
     public ActionNero(final byte neroNumber){
         this.actionID = neroNumber;
