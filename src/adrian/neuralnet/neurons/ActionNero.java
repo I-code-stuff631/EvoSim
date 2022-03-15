@@ -3,13 +3,12 @@ package adrian.neuralnet.neurons;
 import static adrian.Main.rand;
 
 public class ActionNero {
-    byte actionID; //Holds the type of action neron
+    //byte actionID; //Holds the type of action neron
     float sum;
 
-    ActionNero(final byte neroNumber){
-        this.actionID = neroNumber;
-
-    }
+//    ActionNero(final byte neroNumber){
+//        this.actionID = neroNumber;
+//    }
 
     public void addToSum(final float addAmount){
         sum += addAmount;

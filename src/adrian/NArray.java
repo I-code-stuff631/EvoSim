@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 
 public class NArray<T> { //Neron array (designed to be fast for storing neurons in the neural network)
     //ONLY FOR STORING ACTION AND SENSORY NERONS
-    private Object[] CArr; //Compressed array
-    public Object[] A; //normal array
+    //private Object[] CArr; //Compressed array
+    private Object[] A; //normal array
 
     public NArray(final short maxLength){
-        A = new ActionNero[maxLength];
+        A = new Object[maxLength];
     }
 
     void recompress(){ //Updates the compressed array, should be called after modifications are mode to the normal array
@@ -22,8 +22,8 @@ public class NArray<T> { //Neron array (designed to be fast for storing neurons 
         System.out.println(CArr);
     }
 
-    public ActionNero get(final byte index){ //Gets a value from the compressed array
-        return CArr[index];
+    public T get(final byte index){ //Gets a value from the compressed array
+        return (T)CArr[index];
     }
 
 
