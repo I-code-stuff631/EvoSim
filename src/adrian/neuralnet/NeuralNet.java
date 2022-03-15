@@ -73,10 +73,29 @@ public class NeuralNet {
             }
         });
 
+        ////////////////////// Optimize network (remove neurons that contribute nothing to save processing power) //////////////////////
 
+        internalNeros.values().stream().filter(InternalNero::hasNoConnections).forEach(internalNero ->
+                internalNero.sum = Float.NEGATIVE_INFINITY //Marks all internal neurons that have no connection to anything as useless
+        );
 
+        sensoryNeros.values()
+                .stream()
+                .map(s -> s.connectionsToInternalNerons) //Gets all the connectionToInternalNeron arrays
+                .forEach(conToInternals -> { //For each internalNeronArray
+                    conToInternals.stream()
+                            .filter(conToInternal -> conToInternal.neron.sum == Float.NEGATIVE_INFINITY)
+                            //^^ Gets all useless connections that the array contains ^^
+                            .forEach(conToInternals::remove); //Removes each useless connection
+                });
 
+        sensoryNeros.forEach((aByte, sensoryNero) -> {
+            if(sensoryNero.hasNoConnections()){ //If the sensory neron is useless
+                sensoryNeros.remove(aByte); //Remove it
+            }
+        });
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -240,13 +259,7 @@ public class NeuralNet {
 //        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //        //println("Neural net built!");
 //        /////////////////////////////////// Mark nerons that should not be computed for one reason or another as such ///////////////////////////////////
-//        for (final InternalNero internalNero : InternalNeros) {
-//            if (internalNero != null) { //Marks dead end internal nerons as should not be computed
-//                if (internalNero.connectionsToInternalNerons.size() == 0 && internalNero.connectionsToActionNerons.size() == 0) {
-//                    internalNero.sum = Float.NaN;
-//                }
-//            }
-//        }
+
 //        //////////////
 //        //for(final SensoryNero sensoryNero : SensoryNeros){
 //        //  if(sensoryNero != null){
