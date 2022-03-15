@@ -51,6 +51,9 @@ public class InternalNero {
     }
     ///////////////////////////
 
+    public boolean hasNoConnections(){ //For use via stream
+        return (connectionsToInternalNerons.isEmpty() && connectionsToActionNerons.isEmpty());
+    }
 
 
 }

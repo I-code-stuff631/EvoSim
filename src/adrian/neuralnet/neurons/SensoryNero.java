@@ -9,8 +9,8 @@ import java.util.ArrayList;
 public class SensoryNero {
     //byte senseID; //Holds the type of sensory neron
 
-    ArrayList<ConToInternal> connectionsToInternalNerons = new ArrayList<>();
-    ArrayList<ConToAction> connectionsToActionNerons = new ArrayList<>();
+    public ArrayList<ConToInternal> connectionsToInternalNerons = new ArrayList<>();
+    public ArrayList<ConToAction> connectionsToActionNerons = new ArrayList<>();
 
 //    SensoryNero(final byte neronNumber){
 //        this.senseID = neronNumber;
@@ -34,7 +34,9 @@ public class SensoryNero {
     }
     ///////////////////////////
 
-
+    public boolean hasNoConnections(){ //For use with streaming
+        return (connectionsToInternalNerons.isEmpty() && connectionsToActionNerons.isEmpty());
+    }
 
 
 
