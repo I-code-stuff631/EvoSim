@@ -26,18 +26,14 @@ public class SensoryNero {
     }
 
     ////// Adder methods //////
-//    void addConnection(final ConToInternal conToAdd){
-//        connectionsToInternalNerons.add(conToAdd);
-//    }
-//    void addConnection(final ConToAction conToAdd){
-//        connectionsToActionNerons.add(conToAdd);
-//    }
+    public void addConnection(final ConToInternal conToAdd){
+        connectionsToInternalNerons.add(conToAdd);
+    }
+    public void addConnection(final ConToAction conToAdd){
+        connectionsToActionNerons.add(conToAdd);
+    }
     ///////////////////////////
 
-    public void addConnections(final ){
-
-
-    }
 
 
 

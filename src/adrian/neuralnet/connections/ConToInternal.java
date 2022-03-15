@@ -8,7 +8,7 @@ public class ConToInternal {
     public InternalNero neron;
     float weight;
 
-    ConToInternal(final InternalNero childNeron, final float weight){
+    public ConToInternal(final InternalNero childNeron, final float weight){
       this.weight = weight;
       this.neron = childNeron;
     }

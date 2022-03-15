@@ -8,7 +8,7 @@ public class ConToAction {
     ActionNero neron;
     float weight;
 
-    ConToAction(final ActionNero childNeron, final float weight){
+    public ConToAction(final ActionNero childNeron, final float weight){
       this.weight = weight;
       this.neron = childNeron;
     }
