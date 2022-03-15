@@ -1,6 +1,8 @@
 package adrian.neuralnet;
 
 import adrian.Gene;
+import adrian.neuralnet.connections.ConToAction;
+import adrian.neuralnet.connections.ConToInternal;
 import adrian.neuralnet.neurons.ActionNero;
 import adrian.neuralnet.neurons.InternalNero;
 import adrian.neuralnet.neurons.SensoryNero;
@@ -16,7 +18,7 @@ public class NeuralNet {
     HashMap<Byte, ActionNero> actionNeros = new HashMap<>(numberOfActionNeurons);
 
     public NeuralNet(final Gene[] genes){ //Constructs a new neural net based on the genes that are passed in
-        ///////////////////////////// Add the neurons to the network /////////////////////////////
+        //////////////////////////////////// Add the neurons to the network ////////////////////////////////////
         for (final Gene neron : genes){
             ///// Parent neurons /////
             if(neron.isSensory){
@@ -31,11 +33,10 @@ public class NeuralNet {
                 internalNeros.put(neron.childID, new InternalNero());
             }
         }
-        /////////////////////// Add the connections between the neurons ///////////////////////
+        //////////////////////////////////// Add the connections between the neurons ////////////////////////////////////
 
-        ////////////////////// For each neron in each dataset //////////////////////
+        ////////////////////// For each neron that can have a connection //////////////////////
 
-        /////////// Parent neurons ///////////
         sensoryNeros.forEach((aByte, sensoryNero) -> { //Sensory neurons
             Gene[] rawAsocConnections = Arrays.stream(genes) //Get all the connections associated with the current sensory neron
                     .filter(g -> g.isSensory)
@@ -43,47 +44,37 @@ public class NeuralNet {
                     .toArray(Gene[]::new);
             //////////////////////////////////////
             for(final Gene connec : rawAsocConnections){
-                ///// Find the parent node that is described in the first portion of the gene /////
-                //Identify the type of parent node
-                SensoryNero parent;
-                InternalNero parent;
-                if()
+                //// Identify the type of parent node and child node. Then construct the appropriate connection for them and add it ////
 
+                if(connec.isSensory) { //The parent node is a sensoryNeron
+                    final SensoryNero parent = sensoryNeros.get(connec.parentID); //SENSORY NERON
+
+                    /// Identify the type of child node ///
+                    if(connec.isAction){ //The child node is a actionNeron
+                        parent.addConnection( new ConToAction(actionNeros.get(connec.childID), connec.weight) );
+                    }else{ //The child node is a internalNeron
+                        parent.addConnection( new ConToInternal(internalNeros.get(connec.childID), connec.weight) );
+                    }
+
+                }else { //The parent node is a internalNeron
+                    final InternalNero parent = internalNeros.get(connec.parentID); //INTERNAL NERON
+
+                    /// Identify the type of child node ///
+                    if(connec.isAction){ //The child node is a actionNeron
+                        parent.addConnection( new ConToAction(actionNeros.get(connec.childID), connec.weight) );
+                    }else{ //The child node is a internalNeron
+                        parent.addConnection( new ConToInternal(internalNeros.get(connec.childID), connec.weight) );
+                    }
+                }
             }
-
-            //List<Byte> internalConnectionIDs = Arrays.stream(rawAsocConnections).filter(g -> !g.isAction).map(g -> g.childID).toList();
-            //List<Byte> actionConnectionIDs = Arrays.stream(rawAsocConnections).filter(g -> g.isAction).map(g -> g.childID).toList();
-            rawAsocConnections = null;
-            //// Get the children referenced by the connection(s) ////
-//            ArrayList<InternalNero> internalNeronsToConnectTo;
-//            if(!internalConnectionIDs.isEmpty()) {
-//                internalNeronsToConnectTo = new ArrayList<>(internalConnectionIDs.size());
-//                internalNeros.forEach((aByte1, internalNero) -> { //Internal neros
-//                    if (internalConnectionIDs.contains(aByte1)){
-//                        internalNeronsToConnectTo.add(internalNero);
-//                    }
-//                });
-//            }
-//            ArrayList<ActionNero> actionNeronsToConnectTo;
-//            if(!actionConnectionIDs.isEmpty()) {
-//                actionNeronsToConnectTo = new ArrayList<>(actionConnectionIDs.size());
-//                actionNeros.forEach((aByte1, actionNero) -> {
-//                    if(actionConnectionIDs.contains(aByte1)){
-//                        actionNeronsToConnectTo.add(actionNero);
-//                    }
-//                });
-//            }
-            //// Construct the connections ////
-
-
-
         });
 
 
-        for (final Gene conn : genes){
-            //Get connections relating to the neron
 
-        }
+
+
+
+
 
 
     }
