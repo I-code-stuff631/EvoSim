@@ -22,13 +22,13 @@ public class NeuralNet {
         for (final Gene neron : genes){
             ///// Parent neurons /////
             if(neron.isSensory){
-                sensoryNeros.put(neron.parentID, new SensoryNero());
+                sensoryNeros.put(neron.parentID, new SensoryNero(neron.parentID));
             }else { //Is Internal
                 internalNeros.put(neron.parentID, new InternalNero());
             }
             ///// Child neurons /////
             if(neron.isAction){
-                actionNeros.put(neron.childID, new ActionNero());
+                actionNeros.put(neron.childID, new ActionNero(neron.childID));
             }else { //Is Internal
                 internalNeros.put(neron.childID, new InternalNero());
             }
@@ -94,12 +94,6 @@ public class NeuralNet {
                 sensoryNeros.remove(aByte); //Remove it
             }
         });
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
 
     }
 
@@ -208,7 +202,86 @@ public class NeuralNet {
 //        }
 //    }
 
+    public byte getMove(final short x, final short y){
+        ///// Get possible directions the creature can move this cycle /////
+        ArrayList<ActionNero> possibleMoveActionNeros = new ArrayList<>(9);
+        actionNeros.forEach((actionID, actionNero) -> {
+            if(actionID >= 0 && actionID <= 8) { //It is a move neron
+                if(actionNero.fires()) {
+                    possibleMoveActionNeros.add(actionNero);
+                }
+            }
+        });
+        assert possibleMoveActionNeros.size() <= 9;
 
+        //////// Sort all the action nerons in possibleMoveNerons by probability (greatest first) ////////
+        possibleMoveActionNeros.sort(Comparator.comparing(ActionNero::fireProbability).reversed());
+        //If you get errors check this is sorting right ^^
+
+        ////////////// Try moving with each possible neron in order //////////////
+        for(final ActionNero possibleMoveActionNero : possibleMoveActionNeros){
+            if(possibleMoveActionNero.actionID == 0) { //Then its a move random neron (so you have to generate a random move direction)
+                byte moveDir = (byte)(rand.nextInt(8)+1);
+                if(canMove(moveDir, x, y)){
+                    return moveDir;
+                }
+            }else{
+                if( canMove(possibleMoveActionNero.actionID, x, y) ) {
+                    return possibleMoveActionNero.actionID;
+                }
+            }
+        }
+        return 0; //Zero means that you can't move any direction
+    }
+
+
+    private boolean canMove(final byte direction, final short x, final short y){
+        switch(direction){
+            case 1: //Move up
+                if( (y-1 >= 0/*<< For out of bounds execpt*/) && creatures[x][y-1] == null){
+                    return true;
+                }
+                break;
+            case 2: //Move up, right
+                if( (y-1 >= 0 && x+1 < numberOfSquaresAlongX/*<< width*/) && creatures[x+1][y-1] == null){
+                    return true;
+                }
+                break;
+            case 3: //Move right
+                if( (x+1 < numberOfSquaresAlongX) && creatures[x+1][y] == null){
+                    return true;
+                }
+                break;
+            case 4: //Move right, down
+                if( (x+1 < numberOfSquaresAlongX && y+1 < numberOfSquaresAlongY/*<< height*/) && creatures[x+1][y+1] == null){
+                    return true;
+                }
+                break;
+            case 5: //Move down
+                if( (y+1 < numberOfSquaresAlongY) && creatures[x][y+1] == null ){
+                    return true;
+                }
+                break;
+            case 6: //Move down, left
+                if( (y+1 < numberOfSquaresAlongY && x-1 >= 0) && creatures[x-1][y+1] == null){
+                    return true;
+                }
+                break;
+            case 7: //Move left
+                if( (x-1 >= 0) && creatures[x-1][y] == null){
+                    return true;
+                }
+                break;
+            case 8: //Move left, up
+                if( (x-1 >= 0 && y-1 >= 0) && creatures[x-1][y-1] == null){
+                    return true;
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Direction code invalid!");
+        }
+        return false;
+    }
 
 } /////////////// End of object /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
