@@ -3,24 +3,61 @@ package adrian;
 import adrian.neuralnet.NeuralNet;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static adrian.Main.*;
 
 class Creature {
     short x;
     short y;
-    Color c = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+    Color c;// = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
     //me.adrian.Gene[] genome = new me.adrian.Gene[numberOfGenes];
     NeuralNet neuralNet;
     Gene[] genes = new Gene[numberOfGenes];
 
-    Creature(final short x, final short y){ //This is called when the creatures are first being created, it should initialize them with completely random values
+    Creature(final short x, final short y){ //This is called when the creatures are FIRST being created (gen 0), it should initialize them with completely random values
         this.x = x;
         this.y = y;
         /////////
         for (short i=0; i<genes.length; i++){ //Fill the gene array with random genes
             genes[i] = new Gene();
         }
+
+        /// Set the color based on the genes ///
+        double red=0;
+        double firstScalingConstant/*Clamps the number between 0 and 127*/= (127d/numberOfSensoryNeurons);
+        final double secScalingConstant/*Clamps the number between 0 and 127*/= (127d/numberOfInternalNeurons);
+        for(Gene gene : genes){
+            if(gene.isSensory){
+                red += gene.parentID*firstScalingConstant + Byte.MAX_VALUE + 1;
+            }else{
+                red += gene.parentID*secScalingConstant;
+            }
+        }
+        red /= genes.length; //Average red
+
+        double blue=0;
+        firstScalingConstant = (127d/numberOfActionNeurons);
+        for(Gene gene : genes){
+            if(gene.isAction){
+                blue += gene.parentID*firstScalingConstant + Byte.MAX_VALUE + 1;
+            }else{
+                blue += gene.parentID*secScalingConstant;
+            }
+        }
+        blue /= genes.length; //Average blue
+
+        double green=0;
+        firstScalingConstant = (127/8d);
+        for(Gene gene : genes) {
+            green += (gene.weight+4)*firstScalingConstant;
+        }
+        green /= genes.length; //Average green
+
+        c = new Color((int)red, (int)green, (int)blue);
+        ////////////////////////////////////////
+
         neuralNet = new NeuralNet(genes); //Construct a new neural net based on the random genes
     }
 
