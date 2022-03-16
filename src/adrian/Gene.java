@@ -28,7 +28,7 @@ public class Gene implements Cloneable {
         isAction = rand.nextBoolean();
         childID = (byte)(isAction ? rand.nextInt(numberOfActionNeurons) : rand.nextInt(numberOfInternalNeurons));
         ////
-        weight = rand.nextFloat();
+        weight = (float)(rand.nextFloat()-.5)*8;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Gene implements Cloneable {
                 break;
             case 4:
                 while(true) {
-                    final float randomWeight = rand.nextFloat();
+                    final float randomWeight = (float)(rand.nextFloat()-.5)*8;
                     if(randomWeight != weight){
                         break;
                     }
@@ -83,4 +83,11 @@ public class Gene implements Cloneable {
         return mutationCode;
     }
 
+    public final static String separator = "------------------------";
+    @Override
+    public String toString() {
+        String parentInfo = "Parent info: " + (isSensory ? "Sensory neron" : "Internal neron") + '('+parentID+')';
+        String childInfo = "Child info: " + (isAction ? "Action neron" : "Internal neron") + '('+childID+')';
+        return parentInfo +'\n'+ childInfo +'\n'+ ("Weight: " + weight) +'\n'+ separator;
+    }
 }

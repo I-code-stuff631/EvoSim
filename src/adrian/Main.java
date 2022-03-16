@@ -4,14 +4,16 @@ import adrian.neuralnet.NeuralNet;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Main extends JPanel {
     /////// Options ///////
-    final static short numberOfCreatures = 100;
+    final static short numberOfCreatures = 10;
     public static final short numberOfGenes/*numberOfConnections*/ = 4;
     public static final short numberOfSensoryNeurons = 17;
     public static final short numberOfInternalNeurons = 1;
@@ -82,18 +84,29 @@ public class Main extends JPanel {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        /*frame.addComponentListener(new ComponentAdapter() {
+        this.addMouseListener(new MouseAdapter() {
             @Override
-            public void componentResized(ComponentEvent event) {
-                //Do your thing in here
-                System.out.println("Resized");
-                sizeRatio = (short) Math.pow(2, me.adrian.Main.sizeOfGrid);
-                widthDevSizeRatio = (short) (frame.getWidth() / sizeRatio);
-                heightDevSizeRatio = (short) (frame.getHeight() / sizeRatio);
+            public void mouseReleased(MouseEvent e) {
+                mouseX = e.getX();
+                mouseY = e.getY();
             }
-        });*/
+        });
+
+        frame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    paused = !paused;
+                }
+            }
+        });
 
     }
+
+    private boolean paused;
+    /////////
+    private int mouseX=-1;
+    private int mouseY;
 
     @Override
     public void paint(Graphics g) {
@@ -103,7 +116,7 @@ public class Main extends JPanel {
 
             for (short x = 0; x < numberOfSquaresAlongX; x++) {
                 for (short y = 0; y < numberOfSquaresAlongY; y++) {
-                    if (creatures[x][y] != null) { //Update each creature
+                    if (creatures[x][y] != null && !paused) { //Update each creature
                         creatures[x][y].update();
                     }
                 }
@@ -115,11 +128,23 @@ public class Main extends JPanel {
                         g.setColor(creatures[x][y].getColor()); //fill(creatures[x][y].c);
                         g.fillOval(sizeRatio * x, sizeRatio * y, sizeRatio, sizeRatio);
                         //fill(0);
+                        if(mouseX != -1) {
+                            if (mouseX > (sizeRatio*x) && mouseX < (sizeRatio*x+sizeRatio) && mouseY > (sizeRatio*y) && mouseY < (sizeRatio *y+sizeRatio)) {
+                                System.out.println(Gene.separator);
+                                Arrays.stream(creatures[x][y].genes).forEach(System.out::println);
+                            }
+                        }
+
+
                     }
                 }
             }
+            mouseX = -1;
 
-            numberOfStepsPassed++;
+
+            if(!paused) {
+                numberOfStepsPassed++;
+            }
         }else{ //New generation
             numberOfStepsPassed = 0;
 
