@@ -12,8 +12,8 @@ import java.util.*;
 import static adrian.Main.*;
 
 public class NeuralNet {
-    HashMap<Byte, SensoryNero> sensoryNeros = new HashMap<>(numberOfSensoryNeurons);
-    HashMap<Byte, InternalNero> internalNeros = new HashMap<>(numberOfInternalNeurons); //ArrayList<InternalNero> internalNeros = new ArrayList<>(numberOfInternalNeurons);
+    public HashMap<Byte, SensoryNero> sensoryNeros = new HashMap<>(numberOfSensoryNeurons);
+    public HashMap<Byte, InternalNero> internalNeros = new HashMap<>(numberOfInternalNeurons); //ArrayList<InternalNero> internalNeros = new ArrayList<>(numberOfInternalNeurons);
     HashMap<Byte, ActionNero> actionNeros = new HashMap<>(numberOfActionNeurons);
 
     public NeuralNet(final Gene[] genes){ //Constructs a new neural net based on the genes that are passed in
@@ -23,13 +23,13 @@ public class NeuralNet {
             if(neron.isSensory){
                 sensoryNeros.put(neron.parentID, new SensoryNero(neron.parentID));
             }else { //Is Internal
-                internalNeros.put(neron.parentID, new InternalNero());
+                internalNeros.put(neron.parentID, new InternalNero(neron.parentID));
             }
             ///// Child neurons /////
             if(neron.isAction){
                 actionNeros.put(neron.childID, new ActionNero(neron.childID));
             }else { //Is Internal
-                internalNeros.put(neron.childID, new InternalNero());
+                internalNeros.put(neron.childID, new InternalNero(neron.childID));
             }
         }
         //////////////////////////////////// Add the connections between the neurons ////////////////////////////////////
@@ -286,6 +286,10 @@ public class NeuralNet {
         }
         return false;
     }
+
+
+
+
 
 } /////////////// End of object /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

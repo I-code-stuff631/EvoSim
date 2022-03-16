@@ -18,7 +18,7 @@ public class Main extends JPanel {
     public static final short numberOfSensoryNeurons = 17;
     public static final short numberOfInternalNeurons = 1;
     public static final short numberOfActionNeurons = 9/*< For moving*/+2/*< Oscillator period controllers*/;
-    //final static float mutationChance = 0.001;
+    final static double mutationChance = 0.001;
     public static final short numberOfStepsPerCycle = 300;
     private static final short frameRate = 24;
     public static final short sizeOfGrid = 3;

@@ -7,10 +7,15 @@ import java.util.ArrayList;
 
 public class InternalNero {
     //byte neroNumber; Use the pos in the array as the number, the actual identifier should be unnecessary
+    final public byte neroNumber;
     public float sum;
 
     public ArrayList<ConToInternal> connectionsToInternalNerons = new ArrayList<>();
     public ArrayList<ConToAction> connectionsToActionNerons = new ArrayList<>();
+
+    public InternalNero(final byte neroNumber){
+        this.neroNumber = neroNumber;
+    }
 
     public void addToSum(final float addAmount){
         sum += addAmount;
