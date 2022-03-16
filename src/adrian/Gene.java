@@ -2,14 +2,14 @@ package adrian;
 
 import static adrian.Main.*;
 
-public class Gene {
-    final public boolean isSensory;
-    final public byte parentID;
+public class Gene implements Cloneable {
+    public boolean isSensory;
+    public byte parentID;
     ////////
-    final public boolean isAction;
-    final public byte childID;
+    public boolean isAction;
+    public byte childID;
     ////////
-    final public float weight;
+    public float weight;
 
     Gene(boolean isSensory, byte parentID, boolean isAction, byte childID, float weight) {
         this.isSensory = isSensory;
@@ -29,6 +29,15 @@ public class Gene {
         childID = (byte)(isAction ? rand.nextInt(numberOfActionNeurons) : rand.nextInt(numberOfInternalNeurons));
         ////
         weight = rand.nextFloat();
+    }
+
+    @Override
+    public Gene clone() {
+        try {
+            return (Gene) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
 }

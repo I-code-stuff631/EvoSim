@@ -1,7 +1,12 @@
 package adrian;
 
+import adrian.neuralnet.NeuralNet;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -95,7 +100,7 @@ public class Main extends JPanel {
     public void paint(Graphics g) {
         super.paint(g); //Clears the last frames shit
 
-//        if(numberOfStepsPassed >= numberOfSteps) {
+        if(numberOfStepsPassed >= numberOfStepsPerCycle) {
 
             for (short x = 0; x < numberOfSquaresAlongX; x++) {
                 for (short y = 0; y < numberOfSquaresAlongY; y++) {
@@ -116,33 +121,65 @@ public class Main extends JPanel {
             }
 
             numberOfStepsPassed++;
-//        }else{ //New generation
-//            numberOfStepsPassed = 0;
-//
-//            ///////////////////////// Apply the selection criteria /////////////////////////
-//            ArrayList<NeuralNet> survivingCreaturesNeuralNets = new ArrayList<>((int) Math.ceil(numberOfCreatures / 2f));
-//            for (short x = 0; x < numberOfSquaresAlongX; x++) {
-//                for (short y = 0; y < numberOfSquaresAlongY; y++) {
-//                    if (creatures[x][y] != null) {
-//                        if (x > (numberOfSquaresAlongX / 2) /*<< The creature is on the right half of the screen*/) {
-//                            survivingCreaturesNeuralNets.add(creatures[x][y].neuralNet);
-//                        }
-//                        creatures[x][y] = null;
-//                    }
-//                }
-//            }
-//
-//            /////////////// Re-populate the world //////////////////
-//            ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
-//
-//            survivingCreaturesNeuralNets.forEach(n -> {
-//            newCreatures.add(new Creature());
-//            });
-//
-//
-//
-//
-//
+        }else{ //New generation
+            numberOfStepsPassed = 0;
+
+            ///////////////////////// Apply the selection criteria /////////////////////////
+            //ArrayList<NeuralNet> survivingCreaturesNeuralNets = new ArrayList<>((int) Math.ceil(numberOfCreatures / 2f));
+            //HashMap<Gene[], NeuralNet> survivingCreaturesGenesAndNeuralNets = new HashMap<>( (int)Math.ceil(numberOfCreatures/2f) );
+            ArrayList<Tuple<Gene[], NeuralNet>> survivingCreaturesGenesAndNeuralNets = new ArrayList<>(numberOfCreatures);
+            for (short x = 0; x < numberOfSquaresAlongX; x++) {
+                for (short y = 0; y < numberOfSquaresAlongY; y++) {
+                    if (creatures[x][y] != null) {
+                        if (x > (numberOfSquaresAlongX / 2) /*<< The creature is on the right half of the screen*/) {
+                            //survivingCreaturesGenesAndNeuralNets.put(creatures[x][y].genes, creatures[x][y].neuralNet);
+                            survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(creatures[x][y].genes, creatures[x][y].neuralNet));
+                        }
+                        creatures[x][y] = null;
+                    }
+                }
+            }
+
+            /////////////// Re-populate the world //////////////////
+            //survivingCreaturesGenesAndNeuralNets << Already represents each creature once so add on to it until the
+            //required number of creatures has been reached
+            final int originalSize = survivingCreaturesGenesAndNeuralNets.size();
+            while (survivingCreaturesGenesAndNeuralNets.size() < numberOfCreatures){
+                final Tuple<Gene[], NeuralNet> randomElement = survivingCreaturesGenesAndNeuralNets.get( rand.nextInt(originalSize) );
+                ////////// Copy gene array //////////
+                Gene[] geneArrayCopy = new Gene[numberOfGenes];
+                final Gene[] uncopiedGeneArray = randomElement.x;
+
+                assert uncopiedGeneArray.length == numberOfGenes;
+
+                for(short x=0; x<uncopiedGeneArray.length; x++){
+                    geneArrayCopy[x] = uncopiedGeneArray[x].clone();
+                }
+                /////////////////////////////////////
+                survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(geneArrayCopy, new NeuralNet(uncopiedGeneArray)/*<< Makes a copy of the NeuralNet*/));
+            }
+
+            ///// Actually create the new creatures /////
+            ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
+            survivingCreaturesGenesAndNeuralNets.forEach(neuralNetTuple ->
+                    newCreatures.add(new Creature(neuralNetTuple.x, neuralNetTuple.y))
+            );
+
+            ///// Add the creatures to the board randomly /////
+
+
+            }
+
+
+
+
+            //ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
+
+
+
+
+
+
     }
 
     public static int intInRange(int min, int max){

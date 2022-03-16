@@ -65,7 +65,7 @@ class Creature {
         neuralNet = new NeuralNet(genes); //Construct a new neural net based on the random genes
     }
 
-    public Creature(final NeuralNet neuralNet, final Gene[] genes){
+    public Creature(final Gene[] genes, final NeuralNet neuralNet){
 
     }
 
