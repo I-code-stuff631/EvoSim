@@ -10,6 +10,7 @@ import adrian.neuralnet.neurons.SensoryNero;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static adrian.Main.*;
@@ -78,9 +79,9 @@ class Creature {
             }
         }
         ////////// Get the connections associated with the genes to be mutated ////////////
-        final int LengOfArrayLists = (int) Math.ceil(genesToMutate.size()/2f);
-        ArrayList<ConToInternal> conToInternals = new ArrayList<>(LengOfArrayLists);
-        ArrayList<ConToAction> conToActions = new ArrayList<>(LengOfArrayLists);
+        final int lengOfHashMaps = (int) Math.ceil(genesToMutate.size()/2f);
+        HashMap<Gene, ConToInternal> genesAndConToInternals = new HashMap<>(lengOfHashMaps); //ArrayList<ConToInternal> conToInternals = new ArrayList<>(lengOfArrayLists);
+        HashMap<Gene, ConToAction> genesAndConToAction = new HashMap<>(lengOfHashMaps); //ArrayList<ConToAction> conToActions = new ArrayList<>(lengOfArrayLists);
         for(final Gene gene : genesToMutate){
             //Get all connections referenced by the genes
             if(gene.isSensory){ //Parent is sensoryNeron
@@ -88,41 +89,44 @@ class Creature {
 
                 if(gene.isAction){ //Child is actionNeron
                     for (final ConToAction conToAction : parentOfConnection.connectionsToActionNerons) {
-                        if(conToAction.neron.actionID == gene.childID){ //<< If connection is one referenced by the gene
-                            if(!conToActions.contains(conToAction)){
-                                conToActions.add(conToAction);
+                        if(conToAction.neron.actionID == gene.childID && conToAction.weight == gene.weight){
+                            //^^ If connection is one referenced by the gene ^^
+                            if(!genesAndConToAction.containsValue(conToAction)) {
+                                genesAndConToAction.put(gene, conToAction);
                                 break;
                             }
                         }
                     }
                 }else { //Child is internalNeron
                     for (final ConToInternal conToInternal : parentOfConnection.connectionsToInternalNerons) {
-                        if (conToInternal.neron.neroNumber == gene.childID) { //<< If connection is one referenced by the gene
-                            if (!conToInternals.contains(conToInternal)) {
-                                conToInternals.add(conToInternal);
+                        if (conToInternal.neron.neroNumber == gene.childID && conToInternal.weight == gene.weight) {
+                            //^^ If connection is one referenced by the gene ^^
+                            if (!genesAndConToInternals.containsValue(conToInternal)) {
+                                genesAndConToInternals.put(gene, conToInternal);
                                 break;
                             }
                         }
                     }
                 }
-
             }else{ //Parent is internalNeron
                 final InternalNero parentOfConnection = neuralNet.internalNeros.get(gene.parentID);
 
                 if(gene.isAction){ //Child is actionNeron
                     for (final ConToAction conToAction : parentOfConnection.connectionsToActionNerons) {
-                        if(conToAction.neron.actionID == gene.childID){ //<< If connection is one referenced by the gene
-                            if(!conToActions.contains(conToAction)){
-                                conToActions.add(conToAction);
+                        if(conToAction.neron.actionID == gene.childID && conToAction.weight == gene.weight){
+                            //^^ If connection is one referenced by the gene ^^
+                            if(!genesAndConToAction.containsValue(conToAction)) {
+                                genesAndConToAction.put(gene, conToAction);
                                 break;
                             }
                         }
                     }
                 }else{ //Child is internalNeron
                     for (final ConToInternal conToInternal : parentOfConnection.connectionsToInternalNerons) {
-                        if (conToInternal.neron.neroNumber == gene.childID) { //<< If connection is one referenced by the gene
-                            if (!conToInternals.contains(conToInternal)) {
-                                conToInternals.add(conToInternal);
+                        if(conToInternal.neron.neroNumber == gene.childID && conToInternal.weight == gene.weight){
+                            //^^ If connection is one referenced by the gene ^^
+                            if(!genesAndConToInternals.containsValue(conToInternal)) {
+                                genesAndConToInternals.put(gene, conToInternal);
                                 break;
                             }
                         }
@@ -132,12 +136,20 @@ class Creature {
         }
 
         ////////// Mutate the genes ////////////
-
-
-
+        ArrayList<Byte> mutationCodes/*<< Tells you what the mutate method changed*/= new ArrayList<>(genesToMutate.size());
+        genesToMutate.forEach(gene -> mutationCodes.add(gene.mutate()));
 
         ////////// Modify the connections to match with the new genes ////////////
 
+
+
+
+
+
+
+
+
+        ///// Remove any neurons that now do not connect to anything /////
 
 
     }

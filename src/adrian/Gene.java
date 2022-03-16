@@ -40,8 +40,9 @@ public class Gene implements Cloneable {
         }
     }
 
-    void mutate(){ //This must actually change something (So it can't be COMPLETELY random)
-        switch(rand.nextInt(5)/*<<From 0 to 4*/){
+    byte mutate(){ //This must actually change something (So it can't be COMPLETELY random)
+        final byte mutationCode = (byte)rand.nextInt(5);/*<<From 0 to 4*/
+        switch(mutationCode){
             case 0:
                 isSensory = !isSensory;
                 break;
@@ -73,7 +74,7 @@ public class Gene implements Cloneable {
                 }
                 break;
         }
-
+        return mutationCode;
     }
 
 }
