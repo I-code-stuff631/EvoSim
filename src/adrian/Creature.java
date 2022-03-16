@@ -80,8 +80,8 @@ class Creature {
         }
         ////////// Get the connections associated with the genes to be mutated ////////////
         final int lengOfHashMaps = (int) Math.ceil(genesToMutate.size()/2f);
-        HashMap<Gene, ConToInternal> genesAndConToInternals = new HashMap<>(lengOfHashMaps); //ArrayList<ConToInternal> conToInternals = new ArrayList<>(lengOfArrayLists);
-        HashMap<Gene, ConToAction> genesAndConToAction = new HashMap<>(lengOfHashMaps); //ArrayList<ConToAction> conToActions = new ArrayList<>(lengOfArrayLists);
+        HashMap<Gene, ConToInternal> genesAndConToInternal = new HashMap<>(lengOfHashMaps); //ArrayList<ConToInternal> conToInternals = new ArrayList<>(lengOfArrayLists);
+        HashMap<Gene, /*Adding something like a tuple here to hold the parent of the connection would be useful*/ConToAction> genesAndConToAction = new HashMap<>(lengOfHashMaps); //ArrayList<ConToAction> conToActions = new ArrayList<>(lengOfArrayLists);
         for(final Gene gene : genesToMutate){
             //Get all connections referenced by the genes
             if(gene.isSensory){ //Parent is sensoryNeron
@@ -101,8 +101,8 @@ class Creature {
                     for (final ConToInternal conToInternal : parentOfConnection.connectionsToInternalNerons) {
                         if (conToInternal.neron.neroNumber == gene.childID && conToInternal.weight == gene.weight) {
                             //^^ If connection is one referenced by the gene ^^
-                            if (!genesAndConToInternals.containsValue(conToInternal)) {
-                                genesAndConToInternals.put(gene, conToInternal);
+                            if (!genesAndConToInternal.containsValue(conToInternal)) {
+                                genesAndConToInternal.put(gene, conToInternal);
                                 break;
                             }
                         }
@@ -125,8 +125,8 @@ class Creature {
                     for (final ConToInternal conToInternal : parentOfConnection.connectionsToInternalNerons) {
                         if(conToInternal.neron.neroNumber == gene.childID && conToInternal.weight == gene.weight){
                             //^^ If connection is one referenced by the gene ^^
-                            if(!genesAndConToInternals.containsValue(conToInternal)) {
-                                genesAndConToInternals.put(gene, conToInternal);
+                            if(!genesAndConToInternal.containsValue(conToInternal)) {
+                                genesAndConToInternal.put(gene, conToInternal);
                                 break;
                             }
                         }
@@ -140,7 +140,49 @@ class Creature {
         genesToMutate.forEach(gene -> mutationCodes.add(gene.mutate()));
 
         ////////// Modify the connections to match with the new genes ////////////
+        for(short x=0; x<genesToMutate.size(); x++){
+            //////// Get the connection associated with the current gene ////////
+            if( genesAndConToInternal.containsKey(genesToMutate.get(x)) ) { //The connection is a ConToInternal
+                final ConToInternal asocConToInternal = genesAndConToInternal.get( genesToMutate.get(x) );
+                final Gene mutatedGene = genesToMutate.get(x);
 
+                switch (mutationCodes.get(x)) { //Find out what needs to changed to make the connection match with the gene
+                    case 0: //The type of neron the connection connected to was changed (The parent nodes type changed)
+                        ///// Check if the parent neron that now is supposed to hold this connection exists /////
+                        if(mutatedGene.isSensory){
+                            if(!neuralNet.sensoryNeros.containsKey(mutatedGene.parentID)){
+                                asocConToInternal.
+
+
+                            }else { //If it does contain the neron already
+
+
+                            }
+
+                        }
+
+                }
+
+            }else { //The connection is a ConToAction
+                final ConToAction asocConToAction = genesAndConToAction.get( genesToMutate.get(x) );
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+            }
+
+
+
+        }
 
 
 
