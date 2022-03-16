@@ -16,7 +16,7 @@ import java.util.Optional;
 import static adrian.Main.*;
 
 class Creature {
-    short x=-1;
+    short x=Short.MIN_VALUE;
     short y;
     private Color c;
     NeuralNet neuralNet;
@@ -41,6 +41,8 @@ class Creature {
 
     public Creature(final Gene[] genes, final NeuralNet neuralNet, final boolean needsMutation) {
         if (needsMutation) {
+            neuralNet.internalNeros.values().forEach(i -> i.sum = 0); //Reset the internal nero values
+
             ArrayList<Gene> genesToMutate = new ArrayList<>((int) Math.ceil(numberOfGenes * mutationChance));
             for (final Gene gene : genes) {
                 if (rand.nextDouble() <= mutationChance) {
@@ -363,7 +365,7 @@ class Creature {
 
     public void tellPos(final short x, final short y){
         assert x >= 0 && y >= 0; //The pos is valid
-        assert this.x == -1; //The creature does not already know its pos (or this method has not already been called)
+        assert this.x == Short.MIN_VALUE; //The creature does not already know its pos (or this method has not already been called)
         ////////
         this.x = x;
         this.y = y;

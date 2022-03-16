@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main extends JPanel {
     /////// Options ///////
-    final static short numberOfCreatures = 10;
+    final static short numberOfCreatures = 100;
     public static final short numberOfGenes/*numberOfConnections*/ = 4;
     public static final short numberOfSensoryNeurons = 17;
     public static final short numberOfInternalNeurons = 1;
@@ -30,7 +30,7 @@ public class Main extends JPanel {
     public final static short /*widthDevSizeRatio*/numberOfSquaresAlongX = (short) (width / sizeRatio);
     public final static short /*heightDevSizeRatio*/numberOfSquaresAlongY = (short) (height / sizeRatio);
     private final static short totalNumberOfSquares = (short)(numberOfSquaresAlongX*numberOfSquaresAlongY);
-    public final static Random rand = new Random(1110236400L); //ThreadLocalRandom rand = ThreadLocalRandom.current();
+    public final static Random rand = new Random();//new Random(1110236400L); //ThreadLocalRandom rand = ThreadLocalRandom.current();
     public static short numberOfStepsPassed;
     private static final short sizeRatioDev2 = (short) (sizeRatio/2);
     private static short genNumber;
@@ -124,13 +124,11 @@ public class Main extends JPanel {
             numberOfStepsPassed = 0;
 
             ///////////////////////// Apply the selection criteria /////////////////////////
-            //ArrayList<NeuralNet> survivingCreaturesNeuralNets = new ArrayList<>((int) Math.ceil(numberOfCreatures / 2f));
-            //HashMap<Gene[], NeuralNet> survivingCreaturesGenesAndNeuralNets = new HashMap<>( (int)Math.ceil(numberOfCreatures/2f) );
             ArrayList<Tuple<Gene[], NeuralNet>> survivingCreaturesGenesAndNeuralNets = new ArrayList<>(numberOfCreatures);
             for (short x = 0; x < numberOfSquaresAlongX; x++) {
                 for (short y = 0; y < numberOfSquaresAlongY; y++) {
                     if (creatures[x][y] != null) {
-                        if (x > (numberOfSquaresAlongX / 2) /*<< The creature is on the right half of the screen*/) {
+                        if (genNumber <= 4 ? x > (numberOfSquaresAlongX / 2) : x < (numberOfSquaresAlongX / 2) /*<< The creature is on the right half of the screen*/) {
                             //survivingCreaturesGenesAndNeuralNets.put(creatures[x][y].genes, creatures[x][y].neuralNet);
                             survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(creatures[x][y].genes, creatures[x][y].neuralNet));
                         }
@@ -138,6 +136,9 @@ public class Main extends JPanel {
                     }
                 }
             }
+            ////////////////////////////////////////////////////////////////////////////////
+
+            System.out.println("\nSurvivors: "+ survivingCreaturesGenesAndNeuralNets.size());
 
             /////////////// Re-populate the world //////////////////
             //survivingCreaturesGenesAndNeuralNets << Already represents each creature once so add on to it until the
@@ -205,10 +206,6 @@ public class Main extends JPanel {
             System.out.println("Generation: " + genNumber);
         }
 
-
-
-
-            //ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
 
 
 
