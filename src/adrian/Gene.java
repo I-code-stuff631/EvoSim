@@ -40,4 +40,40 @@ public class Gene implements Cloneable {
         }
     }
 
+    void mutate(){ //This must actually change something (So it can't be COMPLETELY random)
+        switch(rand.nextInt(5)/*<<From 0 to 4*/){
+            case 0:
+                isSensory = !isSensory;
+                break;
+            case 1:
+                while(true){
+                    final byte randomParentNeron = (byte)(isSensory ? rand.nextInt(numberOfSensoryNeurons) : rand.nextInt(numberOfInternalNeurons));
+                    if(randomParentNeron != parentID){
+                        break;
+                    }
+                }
+                break;
+            case 2:
+                isAction = !isAction;
+                break;
+            case 3:
+                while(true){
+                    final byte randomChildNeron = (byte)(isAction ? rand.nextInt(numberOfActionNeurons) : rand.nextInt(numberOfInternalNeurons));
+                    if(randomChildNeron != parentID){
+                        break;
+                    }
+                }
+                break;
+            case 4:
+                while(true) {
+                    final float randomWeight = rand.nextFloat();
+                    if(randomWeight != weight){
+                        break;
+                    }
+                }
+                break;
+        }
+
+    }
+
 }
