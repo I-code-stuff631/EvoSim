@@ -33,6 +33,7 @@ public class Main extends JPanel {
     public final static Random rand = new Random(1110236400L); //ThreadLocalRandom rand = ThreadLocalRandom.current();
     public static short numberOfStepsPassed;
     private static final short sizeRatioDev2 = (short) (sizeRatio/2);
+    private static short genNumber;
 
     public static Creature[][] creatures = new Creature[numberOfSquaresAlongX][numberOfSquaresAlongY];
 
@@ -98,7 +99,7 @@ public class Main extends JPanel {
     public void paint(Graphics g) {
         super.paint(g); //Clears the last frames shit
 
-        if(numberOfStepsPassed >= numberOfStepsPerCycle) {
+        if(numberOfStepsPassed < numberOfStepsPerCycle) {
 
             for (short x = 0; x < numberOfSquaresAlongX; x++) {
                 for (short y = 0; y < numberOfSquaresAlongY; y++) {
@@ -169,17 +170,40 @@ public class Main extends JPanel {
                 newCreatures.add( new Creature(currentElement.X, currentElement.Y, true) );
             }
 
-            assert  survivingCreaturesGenesAndNeuralNets.size() == numberOfCreatures;
+            assert survivingCreaturesGenesAndNeuralNets.size() == numberOfCreatures;
             for (short x = (short)originalSize; x<numberOfCreatures; x++){
                 final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
                 newCreatures.add( new Creature(currentElement.X, currentElement.Y, false));
             }
             ///////////////////////////////////////////////////////////////////////
 
+            assert newCreatures.size() == numberOfCreatures;
+
             ///// Add the creatures to the board randomly /////
+            while (newCreatures.size() > 0) {
+                for (short x = 0; x < numberOfSquaresAlongX; x++) {
+                    for (short y = 0; y < numberOfSquaresAlongY; y++) {
+                        if ((creatures[x][y] == null) && (intInRange(1, totalNumberOfSquares) <= numberOfCreatures)) {
+                            creatures[x][y] = newCreatures.get(0);
+                            newCreatures.get(0).tellPos(x, y);
+                            newCreatures.remove(0);
+                            if(newCreatures.size() <= 0){
+                                break;
+                            }
+                        }
 
+                    }
+                    if(newCreatures.size() <= 0){
+                        break;
+                    }
 
+                }
             }
+            ///////////////////////////////////////////////////
+
+            genNumber++;
+            System.out.println("Generation: " + genNumber);
+        }
 
 
 

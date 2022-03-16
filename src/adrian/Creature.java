@@ -14,7 +14,7 @@ import java.util.Optional;
 import static adrian.Main.*;
 
 class Creature {
-    short x;
+    short x=-1;
     short y;
     Color c;
     NeuralNet neuralNet;
@@ -389,6 +389,13 @@ class Creature {
         this.genes = genes;
     }
 
+    public void tellPos(final short x, final short y){
+        assert x >= 0 && y >= 0; //The pos is valid
+        assert this.x == -1; //The creature does not already know its pos (or this method has not already been called)
+        ////////
+        this.x = x;
+        this.y = y;
+    }
 
 
 
