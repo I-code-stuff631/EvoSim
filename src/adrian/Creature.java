@@ -346,8 +346,33 @@ class Creature {
 
                         }
                         break;
-                    case 3:
+                    case 3: //Child ID was changed (type remains the same)
+                        if(mutatedGene.isAction){ //The child is an actionNeron
+                            //// Find new child creating it if it does not exist ////
+                            ActionNero newChild = neuralNet.actionNeros.get(mutatedGene.childID);
+                            if(newChild == null){
+                                newChild = new ActionNero(mutatedGene.childID);
+                                neuralNet.actionNeros.put(mutatedGene.childID, newChild);
+                            }
+                            //////////////////////////////////////////////////////////
 
+                            final ConToAction asocConnection = connection.Y;
+                            asocConnection.neron = newChild; //Switch the old child to the new child
+
+                        }else{ //The child is an internalNeron
+                            //// Find new child creating it if it does not exist ////
+                            InternalNero newChild = neuralNet.internalNeros.get(mutatedGene.childID);
+                            if(newChild == null){
+                                newChild = new InternalNero(mutatedGene.childID);
+                                neuralNet.internalNeros.put(mutatedGene.childID, newChild);
+                            }
+                            //////////////////////////////////////////////////////////
+
+                            final ConToInternal asocConnection = connection.X;
+                            asocConnection.neron = newChild; //Switch the old child to the new child
+
+                        }
+                        break;
 
 
 
