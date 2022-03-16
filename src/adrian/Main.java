@@ -112,7 +112,7 @@ public class Main extends JPanel {
             for (short x = 0; x < numberOfSquaresAlongX; x++) {
                 for (short y = 0; y < numberOfSquaresAlongY; y++) {
                     if (creatures[x][y] != null) {
-                        g.setColor(creatures[x][y].c); //fill(creatures[x][y].c);
+                        g.setColor(creatures[x][y].getColor()); //fill(creatures[x][y].c);
                         g.fillOval(sizeRatio * x, sizeRatio * y, sizeRatio, sizeRatio);
                         //fill(0);
                     }

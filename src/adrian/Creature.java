@@ -9,6 +9,8 @@ import adrian.neuralnet.neurons.SensoryNero;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 import static adrian.Main.*;
@@ -16,7 +18,7 @@ import static adrian.Main.*;
 class Creature {
     short x=-1;
     short y;
-    Color c;
+    private Color c;
     NeuralNet neuralNet;
     Gene[] genes = new Gene[numberOfGenes];
     ///Action neron controlled variables///
@@ -32,39 +34,7 @@ class Creature {
             genes[i] = new Gene();
         }
 
-        /// Set the color based on the genes ///
-        double red=0;
-        double firstScalingConstant/*Clamps the number between 0 and 127*/= (127d/numberOfSensoryNeurons);
-        final double secScalingConstant/*Clamps the number between 0 and 127*/= (127d/numberOfInternalNeurons);
-        for(Gene gene : genes){
-            if(gene.isSensory){
-                red += gene.parentID*firstScalingConstant + Byte.MAX_VALUE + 1;
-            }else{
-                red += gene.parentID*secScalingConstant;
-            }
-        }
-        red /= genes.length; //Average red
-
-        double blue=0;
-        firstScalingConstant = (127d/numberOfActionNeurons);
-        for(Gene gene : genes){
-            if(gene.isAction){
-                blue += gene.childID*firstScalingConstant + Byte.MAX_VALUE + 1;
-            }else{
-                blue += gene.childID*secScalingConstant;
-            }
-        }
-        blue /= genes.length; //Average blue
-
-        double green=0;
-        firstScalingConstant = (127/8d);
-        for(Gene gene : genes) {
-            green += (gene.weight+4)*firstScalingConstant;
-        }
-        green /= genes.length; //Average green
-
-        c = new Color((int)red, (int)green, (int)blue);
-        ////////////////////////////////////////
+        setColor();
 
         neuralNet = new NeuralNet(genes); //Construct a new neural net based on the random genes
     }
@@ -387,6 +357,8 @@ class Creature {
         }
         this.neuralNet = neuralNet;
         this.genes = genes;
+
+        setColor();
     }
 
     public void tellPos(final short x, final short y){
@@ -445,6 +417,48 @@ class Creature {
         this.y = (short)y;
     }
 
+    private void setColor(){
+        assert genes[0] != null; //Make sure the genes are not unset when this is called
+
+        /// Set the color based on the genes ///
+        double red=0;
+        double firstScalingConstant/*Clamps the number between 0 and 127*/= (127d/numberOfSensoryNeurons);
+        final double secScalingConstant/*Clamps the number between 0 and 127*/= (127d/numberOfInternalNeurons);
+        for(Gene gene : genes){
+            if(gene.isSensory){
+                red += gene.parentID*firstScalingConstant + Byte.MAX_VALUE + 1;
+            }else{
+                red += gene.parentID*secScalingConstant;
+            }
+        }
+        red /= genes.length; //Average red
+
+        double blue=0;
+        firstScalingConstant = (127d/numberOfActionNeurons);
+        for(Gene gene : genes){
+            if(gene.isAction){
+                blue += gene.childID*firstScalingConstant + Byte.MAX_VALUE + 1;
+            }else{
+                blue += gene.childID*secScalingConstant;
+            }
+        }
+        blue /= genes.length; //Average blue
+
+        double green=0;
+        firstScalingConstant = (127/8d);
+        for(Gene gene : genes) {
+            green += (gene.weight+4)*firstScalingConstant;
+        }
+        green /= genes.length; //Average green
+
+        c = new Color((int)red, (int)green, (int)blue);
+        ////////////////////////////////////////
+
+    }
+
+    public Color getColor(){
+        return c;
+    }
 
 
 
