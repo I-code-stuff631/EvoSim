@@ -14,7 +14,7 @@ import static adrian.Main.*;
 public class NeuralNet {
     public HashMap<Byte, SensoryNero> sensoryNeros = new HashMap<>(numberOfSensoryNeurons);
     public HashMap<Byte, InternalNero> internalNeros = new HashMap<>(numberOfInternalNeurons); //ArrayList<InternalNero> internalNeros = new ArrayList<>(numberOfInternalNeurons);
-    HashMap<Byte, ActionNero> actionNeros = new HashMap<>(numberOfActionNeurons);
+    public HashMap<Byte, ActionNero> actionNeros = new HashMap<>(numberOfActionNeurons);
 
     public NeuralNet(final Gene[] genes){ //Constructs a new neural net based on the genes that are passed in
         //////////////////////////////////// Add the neurons to the network ////////////////////////////////////

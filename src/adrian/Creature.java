@@ -3,6 +3,7 @@ package adrian;
 import adrian.neuralnet.NeuralNet;
 import adrian.neuralnet.connections.ConToAction;
 import adrian.neuralnet.connections.ConToInternal;
+import adrian.neuralnet.neurons.ActionNero;
 import adrian.neuralnet.neurons.InternalNero;
 import adrian.neuralnet.neurons.SensoryNero;
 
@@ -286,7 +287,67 @@ class Creature {
 
                         }
                         break;
-                    case 2:
+                    case 2: //Child type was changed (which also means that the connections type was inverted)
+                        if(mutatedGene.isAction){ //The child is an actionNeron
+                            //// Find new child creating it if it does not exist ////
+                            ActionNero newChild = neuralNet.actionNeros.get(mutatedGene.childID);
+                            if(newChild == null){
+                                newChild = new ActionNero(mutatedGene.childID);
+                                neuralNet.actionNeros.put(mutatedGene.childID, newChild);
+                            }
+                            //////////////////////////////////////////////////////////
+
+                            final ConToInternal oldConnection = connection.X; //Since the new connection is a ConToAction the old connection was a ConToInternal
+                            final ConToAction newConnection = new ConToAction(newChild, oldConnection.weight);
+
+                            //////////////////////////////////////////////////////////
+
+                            ////////// Get the parent, remove the old con, and add the new one //////////
+                            if(parentOfConnection.X != null){ //The parent is a sensoryNeron
+                                final SensoryNero sensoryNero = parentOfConnection.X;
+
+                                sensoryNero.connectionsToInternalNerons.remove(oldConnection);
+                                sensoryNero.connectionsToActionNerons.add(newConnection);
+                            }else{ //The parent is a internalNeron
+                                final InternalNero internalNero = parentOfConnection.Y;
+
+                                internalNero.connectionsToInternalNerons.remove(oldConnection);
+                                internalNero.connectionsToActionNerons.add(newConnection);
+                            }
+                            /////////////////////////////////////////////////////////////////////////////
+
+                        }else{ //The child is an internalNeron
+                            //// Find new child creating it if it does not exist ////
+                            InternalNero newChild = neuralNet.internalNeros.get(mutatedGene.childID);
+                            if(newChild == null){
+                                newChild = new InternalNero(mutatedGene.childID);
+                                neuralNet.internalNeros.put(mutatedGene.childID, newChild);
+                            }
+                            //////////////////////////////////////////////////////////
+
+                            final ConToAction oldConnection = connection.Y; //Since the new connection is a ConToInternal the old connection was a ConToAction
+                            final ConToInternal newConnection = new ConToInternal(newChild, oldConnection.weight);
+
+                            //////////////////////////////////////////////////////////
+
+                            ////////// Get the parent, remove the old con, and add the new one //////////
+                            if(parentOfConnection.X != null){ //The parent is a sensoryNeron
+                                final SensoryNero sensoryNero = parentOfConnection.X;
+
+                                sensoryNero.connectionsToActionNerons.remove(oldConnection);
+                                sensoryNero.connectionsToInternalNerons.add(newConnection);
+                            }else{ //The parent is a internalNeron
+                                final InternalNero internalNero = parentOfConnection.Y;
+
+                                internalNero.connectionsToActionNerons.remove(oldConnection);
+                                internalNero.connectionsToInternalNerons.add(newConnection);
+                            }
+                            /////////////////////////////////////////////////////////////////////////////
+
+                        }
+                        break;
+                    case 3:
+
 
 
 
