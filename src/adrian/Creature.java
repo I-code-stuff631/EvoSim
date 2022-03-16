@@ -373,10 +373,13 @@ class Creature {
 
                         }
                         break;
-
-
-
-
+                    case 4: //The connections weight was changed
+                        if(connection.X != null){ //If the connection is a ConToInternal
+                            connection.X.weight = mutatedGene.weight;
+                        }else{ //If the connection is a ConToAction
+                            connection.Y.weight = mutatedGene.weight;
+                        }
+                        break;
                 }
 
             }
