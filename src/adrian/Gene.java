@@ -41,7 +41,27 @@ public class Gene implements Cloneable {
     }
 
     byte mutate(){ //This must actually change something (So it can't be COMPLETELY random)
-        final byte mutationCode = (byte)rand.nextInt(5);/*<<From 0 to 4*/
+        //final byte mutationCode = (byte)rand.nextInt(5);/*<<From 0 to 4*/
+        byte mutationCode = (byte)rand.nextInt(5);
+
+       if(numberOfInternalNeurons == 1) { //Patch for internalNeron's for number of given neron == 1 crash
+
+           if (!isAction && !isSensory) {
+               while (mutationCode == 1 || mutationCode == 3) {
+                   mutationCode = (byte) rand.nextInt(5);
+               }
+           }else if(!isAction){
+               while (mutationCode == 3) {
+                   mutationCode = (byte) rand.nextInt(5);
+               }
+           }else if(!isSensory){
+               while (mutationCode == 1) {
+                   mutationCode = (byte) rand.nextInt(5);
+               }
+           }
+
+       }
+
         switch(mutationCode){
             case 0:
                 isSensory = !isSensory;
