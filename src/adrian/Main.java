@@ -5,8 +5,6 @@ import adrian.neuralnet.NeuralNet;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -143,27 +141,40 @@ public class Main extends JPanel {
             /////////////// Re-populate the world //////////////////
             //survivingCreaturesGenesAndNeuralNets << Already represents each creature once so add on to it until the
             //required number of creatures has been reached
+
+            //Note: This method adds mutated networks on (so they do not need to be mutated again by the creature)
             final int originalSize = survivingCreaturesGenesAndNeuralNets.size();
             while (survivingCreaturesGenesAndNeuralNets.size() < numberOfCreatures){
                 final Tuple<Gene[], NeuralNet> randomElement = survivingCreaturesGenesAndNeuralNets.get( rand.nextInt(originalSize) );
                 ////////// Copy gene array //////////
                 Gene[] geneArrayCopy = new Gene[numberOfGenes];
-                final Gene[] uncopiedGeneArray = randomElement.x;
+                final Gene[] uncopiedGeneArray = randomElement.X;
 
                 assert uncopiedGeneArray.length == numberOfGenes;
 
                 for(short x=0; x<uncopiedGeneArray.length; x++){
                     geneArrayCopy[x] = uncopiedGeneArray[x].clone();
+                    if(rand.nextDouble() <= mutationChance) {
+                        geneArrayCopy[x].mutate();
+                    }
                 }
                 /////////////////////////////////////
-                survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(geneArrayCopy, new NeuralNet(uncopiedGeneArray)/*<< Makes a copy of the NeuralNet*/));
+                survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(geneArrayCopy, new NeuralNet(geneArrayCopy)/*<< Makes a copy of the NeuralNet*/));
             }
 
-            ///// Actually create the new creatures /////
+            ////////////////// Actually create the new creatures //////////////////
             ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
-            survivingCreaturesGenesAndNeuralNets.forEach(neuralNetTuple ->
-                    newCreatures.add(new Creature(neuralNetTuple.x, neuralNetTuple.y))
-            );
+            for(short x=0; x<originalSize; x++){
+                final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
+                newCreatures.add( new Creature(currentElement.X, currentElement.Y, true) );
+            }
+
+            assert  survivingCreaturesGenesAndNeuralNets.size() == numberOfCreatures;
+            for (short x = (short)originalSize; x<numberOfCreatures; x++){
+                final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
+                newCreatures.add( new Creature(currentElement.X, currentElement.Y, false));
+            }
+            ///////////////////////////////////////////////////////////////////////
 
             ///// Add the creatures to the board randomly /////
 
