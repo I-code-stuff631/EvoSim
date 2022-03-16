@@ -6,7 +6,7 @@ import static adrian.Main.rand;
 
 public class ConToInternal {
     public InternalNero neron;
-    float weight;
+    public float weight;
 
     public ConToInternal(final InternalNero childNeron, final float weight){
       this.weight = weight;

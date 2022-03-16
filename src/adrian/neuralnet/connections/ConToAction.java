@@ -6,7 +6,7 @@ import static adrian.Main.rand;
 
 public class ConToAction {
     public ActionNero neron;
-    float weight;
+    public float weight;
 
     public ConToAction(final ActionNero childNeron, final float weight){
       this.weight = weight;
