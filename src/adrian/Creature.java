@@ -3,14 +3,11 @@ package adrian;
 import adrian.neuralnet.NeuralNet;
 import adrian.neuralnet.connections.ConToAction;
 import adrian.neuralnet.connections.ConToInternal;
-import adrian.neuralnet.neurons.ActionNero;
 import adrian.neuralnet.neurons.InternalNero;
 import adrian.neuralnet.neurons.SensoryNero;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Optional;
 
 import static adrian.Main.*;
@@ -72,7 +69,7 @@ class Creature {
     }
 
     public Creature(final Gene[] genes, final NeuralNet neuralNet, final boolean needsMutation) {
-        if(needsMutation){
+        if (needsMutation) {
             ArrayList<Gene> genesToMutate = new ArrayList<>((int) Math.ceil(numberOfGenes * mutationChance));
             for (final Gene gene : genes) {
                 if (rand.nextDouble() <= mutationChance) {
@@ -93,9 +90,9 @@ class Creature {
                             if (conToAction.neron.actionID == gene.childID && conToAction.weight == gene.weight) {
                                 //^^ If connection is one referenced by the gene ^^
                                 final boolean containsCurrentConnection = connections.stream().map(t -> t.Y/*<< Get all conToActions*/).anyMatch(con -> con == conToAction);
-                                if( !containsCurrentConnection ){
-                                    connections.add( new Tuple<>(null, conToAction) );
-                                    parentsOfConnections.add( new Tuple<>(parentOfConnection, null) );
+                                if (!containsCurrentConnection) {
+                                    connections.add(new Tuple<>(null, conToAction));
+                                    parentsOfConnections.add(new Tuple<>(parentOfConnection, null));
                                     break;
                                 }
 
@@ -106,9 +103,9 @@ class Creature {
                             if (conToInternal.neron.neroNumber == gene.childID && conToInternal.weight == gene.weight) {
                                 //^^ If connection is one referenced by the gene ^^
                                 final boolean containsCurrentConnection = connections.stream().map(t -> t.X/*<< Get all conToInternal*/).anyMatch(con -> con == conToInternal);
-                                if( !containsCurrentConnection ){
-                                    connections.add( new Tuple<>(conToInternal, null) );
-                                    parentsOfConnections.add( new Tuple<>(parentOfConnection, null) );
+                                if (!containsCurrentConnection) {
+                                    connections.add(new Tuple<>(conToInternal, null));
+                                    parentsOfConnections.add(new Tuple<>(parentOfConnection, null));
                                     break;
                                 }
 
@@ -123,9 +120,9 @@ class Creature {
                             if (conToAction.neron.actionID == gene.childID && conToAction.weight == gene.weight) {
                                 //^^ If connection is one referenced by the gene ^^
                                 final boolean containsCurrentConnection = connections.stream().map(t -> t.Y/*<< Get all conToActions*/).anyMatch(con -> con == conToAction);
-                                if( !containsCurrentConnection ){
-                                    connections.add( new Tuple<>(null, conToAction) );
-                                    parentsOfConnections.add( new Tuple<>(null, parentOfConnection) );
+                                if (!containsCurrentConnection) {
+                                    connections.add(new Tuple<>(null, conToAction));
+                                    parentsOfConnections.add(new Tuple<>(null, parentOfConnection));
                                     break;
                                 }
 
@@ -136,9 +133,9 @@ class Creature {
                             if (conToInternal.neron.neroNumber == gene.childID && conToInternal.weight == gene.weight) {
                                 //^^ If connection is one referenced by the gene ^^
                                 final boolean containsCurrentConnection = connections.stream().map(t -> t.X/*<< Get all conToInternal*/).anyMatch(con -> con == conToInternal);
-                                if( !containsCurrentConnection ){
-                                    connections.add( new Tuple<>(conToInternal, null) );
-                                    parentsOfConnections.add( new Tuple<>(null, parentOfConnection) );
+                                if (!containsCurrentConnection) {
+                                    connections.add(new Tuple<>(conToInternal, null));
+                                    parentsOfConnections.add(new Tuple<>(null, parentOfConnection));
                                     break;
                                 }
 
@@ -147,45 +144,131 @@ class Creature {
                     }
                 }
             }
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             ////////// Mutate the genes ////////////
             ArrayList<Byte> mutationCodes/*<< Tells you what the mutate method changed*/ = new ArrayList<>(genesToMutate.size());
             genesToMutate.forEach(gene -> mutationCodes.add(gene.mutate()));
+            ////////////////////////////////////////
 
             ////////// Modify the connections to match with the new genes ////////////
-            for (short x = 0; x < genesToMutate.size(); x++) {
-                //////// Get the connection associated with the current gene ////////
-                if (genesAndConToInternal.containsKey(genesToMutate.get(x))) { //The connection is a ConToInternal
-                    final ConToInternal asocConToInternal = genesAndConToInternal.get(genesToMutate.get(x));
-                    final Gene mutatedGene = genesToMutate.get(x);
+            for (short currentGeneIndex = 0; currentGeneIndex < genesToMutate.size(); currentGeneIndex++) {
 
-                    switch (mutationCodes.get(x)) { //Find out what needs to changed to make the connection match with the gene
-                        case 0: //The type of neron the connection connected to was changed (The parent nodes type changed)
-                            ///// Check if the parent neron that now is supposed to hold this connection exists /////
-                            if (mutatedGene.isSensory) {
-                                if (!neuralNet.sensoryNeros.containsKey(mutatedGene.parentID)) {
-                                    asocConToInternal.
+                final Tuple<ConToInternal, ConToAction> connection = connections.get(currentGeneIndex);
+                final Gene mutatedGene = genesToMutate.get(currentGeneIndex);
+                final Tuple<SensoryNero, InternalNero> parentOfConnection = parentsOfConnections.get(currentGeneIndex);
+                switch (mutationCodes.get(currentGeneIndex)/*<< What mutation was preformed?*/){
+                    case 0: //The type of the parent of the connection was changed
+                        if(mutatedGene.isSensory){ //New parent is sensoryNero
+                            //// Find new parent creating it if it does not exist ////
+                            SensoryNero newParent = neuralNet.sensoryNeros.get(mutatedGene.parentID);
+                            if(newParent == null/*If new parent does not exist*/){
+                                newParent = new SensoryNero(mutatedGene.parentID);
+                                neuralNet.sensoryNeros.put(mutatedGene.parentID, newParent);
+                            }
+                            //////////////////////////////////////////////////////////
 
+                            final InternalNero oldParent = parentOfConnection.Y; //Old parent was internalNeron since new parent is sensoryNeron
 
-                                } else { //If it does contain the neron already
+                            ///////// Get the associated connection and move it to its proper place /////////
+                            if(mutatedGene.isAction){ //The connection is a ConToAction
+                                final Optional<ConToAction> conToAction = oldParent.connectionsToActionNerons
+                                        .stream()
+                                        .filter(con -> con.weight == mutatedGene.weight)
+                                        .filter(con -> con.neron.actionID == mutatedGene.childID)
+                                        .findFirst();
+                                assert conToAction.isPresent();
 
+                                //// Move the connection ////
+                                oldParent.connectionsToActionNerons.remove(conToAction.get());
+                                newParent.connectionsToActionNerons.add(conToAction.get());
+                                /////////////////////////////
 
-                                }
+                            }else{ //The connection is a ConToInternal
+                                final Optional<ConToInternal> conToInternal = oldParent.connectionsToInternalNerons
+                                        .stream()
+                                        .filter(con -> con.weight == mutatedGene.weight)
+                                        .filter(con -> con.neron.neroNumber == mutatedGene.childID)
+                                        .findFirst();
+                                assert conToInternal.isPresent();
 
+                                //// Move the connection ////
+                                oldParent.connectionsToInternalNerons.remove(conToInternal.get());
+                                newParent.connectionsToInternalNerons.add(conToInternal.get());
+                                /////////////////////////////
+                            }
+                            /////////////////////////////////////////////////////////////////////////////////
+
+                        }else{ //New parent is internalNero
+                            InternalNero newParent = neuralNet.internalNeros.get(mutatedGene.parentID);
+                            if(newParent == null){
+                                newParent = new InternalNero(mutatedGene.parentID);
+                                neuralNet.internalNeros.put(mutatedGene.parentID, newParent);
                             }
 
-                    }
+                            final SensoryNero oldParent = parentOfConnection.X; //Old parent was sensoryNeron since new parent is internalNeron
 
-                } else { //The connection is a ConToAction
-                    final ConToAction asocConToAction = genesAndConToAction.get(genesToMutate.get(x));
+                            ///////// Get the associated connection and move it to its proper place /////////
+                            if(mutatedGene.isAction){
+                                final Optional<ConToAction> conToAction = oldParent.connectionsToActionNerons
+                                        .stream()
+                                        .filter(con -> con.weight == mutatedGene.weight)
+                                        .filter(con -> con.neron.actionID == mutatedGene.childID)
+                                        .findFirst();
+                                assert conToAction.isPresent();
+
+                                //// Move the connection ////
+                                oldParent.connectionsToActionNerons.remove(conToAction.get());
+                                newParent.connectionsToActionNerons.add(conToAction.get());
+                                /////////////////////////////
+
+                            }else{
+                                final Optional<ConToInternal> conToInternal = oldParent.connectionsToInternalNerons
+                                        .stream()
+                                        .filter(con -> con.weight == mutatedGene.weight)
+                                        .filter(con -> con.neron.neroNumber == mutatedGene.childID)
+                                        .findFirst();
+                                assert conToInternal.isPresent();
+
+                                //// Move the connection ////
+                                oldParent.connectionsToInternalNerons.remove(conToInternal.get());
+                                newParent.connectionsToInternalNerons.add(conToInternal.get());
+                                /////////////////////////////
+                            }
+                            /////////////////////////////////////////////////////////////////////////////////
+
+                        }
+                        break;
+                    case 1: //Parent neurons ID changed (type remains the same)
+                        if(mutatedGene.isSensory){ //The parent is a sensoryNeron
+                            //// Find new parent creating it if it does not exist ////
+                            SensoryNero newParent = neuralNet.sensoryNeros.get(mutatedGene.parentID);
+                            if(newParent == null/*If new parent does not exist*/){
+                                newParent = new SensoryNero(mutatedGene.parentID);
+                                neuralNet.sensoryNeros.put(mutatedGene.parentID, newParent);
+                            }
+                            //////////////////////////////////////////////////////////
+
+                            final SensoryNero oldParent = parentOfConnection.X;
+
+
+
+
+
+
+                        }
+                        //parentsOfConnections
+
+
 
                 }
-
 
             }
 
 
-            ///// Remove any neurons that now do not connect to anything /////
+
+
+
 
         }
         this.neuralNet = neuralNet;
