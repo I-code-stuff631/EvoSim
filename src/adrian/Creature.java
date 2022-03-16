@@ -82,83 +82,54 @@ class Creature {
         ArrayList<ConToInternal> conToInternals = new ArrayList<>(LengOfArrayLists);
         ArrayList<ConToAction> conToActions = new ArrayList<>(LengOfArrayLists);
         for(final Gene gene : genesToMutate){
-            //Get first connections (though it is much more likely that there will just be one connection)
-            // matching the gene and add them/it
+            //Get all connections referenced by the genes
             if(gene.isSensory){ //Parent is sensoryNeron
                 final SensoryNero parentOfConnection = neuralNet.sensoryNeros.get(gene.parentID); //This should never be null
 
-                if(gene.isAction){
-
-                    ConToAction[] allConnectionsToChild/*<< In almost all cases there will only be one BUT
-                    it is technically possible for there to be more*/= parentOfConnection.connectionsToActionNerons
-                            .stream()
-                            .filter(c -> c.neron.actionID == gene.childID)
-                            .toArray(ConToAction[]::new);
-
-                    //It should be noted that there HAS to be at least one match for this search so the object at 0 has
-                    //to not be null
-                    if( !conToActions.contains(allConnectionsToChild[0]) ){
-                        conToActions.addAll(Arrays.asList(allConnectionsToChild));
+                if(gene.isAction){ //Child is actionNeron
+                    for (final ConToAction conToAction : parentOfConnection.connectionsToActionNerons) {
+                        if(conToAction.neron.actionID == gene.childID){ //<< If connection is one referenced by the gene
+                            if(!conToActions.contains(conToAction)){
+                                conToActions.add(conToAction);
+                                break;
+                            }
+                        }
                     }
-
-                }else{ //Child is internalNeron
-
-                    ConToInternal[] allConnectionsToChild = parentOfConnection.connectionsToInternalNerons
-                            .stream()
-                            .filter(c -> c.neron.neroNumber == gene.childID)
-                            .toArray(ConToInternal[]::new);
-
-                    if( !conToInternals.contains(allConnectionsToChild[0]) ){
-                        conToInternals.addAll(Arrays.asList(allConnectionsToChild));
+                }else { //Child is internalNeron
+                    for (final ConToInternal conToInternal : parentOfConnection.connectionsToInternalNerons) {
+                        if (conToInternal.neron.neroNumber == gene.childID) { //<< If connection is one referenced by the gene
+                            if (!conToInternals.contains(conToInternal)) {
+                                conToInternals.add(conToInternal);
+                                break;
+                            }
+                        }
                     }
-
                 }
 
             }else{ //Parent is internalNeron
                 final InternalNero parentOfConnection = neuralNet.internalNeros.get(gene.parentID);
 
-                if(gene.isAction){ //Child is action neron
-
-                    ConToAction[] allConnectionsToChild = parentOfConnection.connectionsToActionNerons
-                            .stream()
-                            .filter(c -> c.neron.actionID == gene.childID)
-                            .toArray(ConToAction[]::new);
-
-                    if( !conToActions.contains(allConnectionsToChild[0]) ){
-                        conToActions.addAll(Arrays.asList(allConnectionsToChild));
+                if(gene.isAction){ //Child is actionNeron
+                    for (final ConToAction conToAction : parentOfConnection.connectionsToActionNerons) {
+                        if(conToAction.neron.actionID == gene.childID){ //<< If connection is one referenced by the gene
+                            if(!conToActions.contains(conToAction)){
+                                conToActions.add(conToAction);
+                                break;
+                            }
+                        }
                     }
-
-                }else{ //Child is internal neron
-
-                    ConToInternal[] allConnectionsToChild = parentOfConnection.connectionsToInternalNerons
-                            .stream()
-                            .filter(c -> c.neron.neroNumber == gene.)
-                            .toArray(ConToAction[]::new);
-
-                    if( !conToActions.contains(allConnectionsToChild[0]) ){
-                        conToActions.addAll(Arrays.asList(allConnectionsToChild));
+                }else{ //Child is internalNeron
+                    for (final ConToInternal conToInternal : parentOfConnection.connectionsToInternalNerons) {
+                        if (conToInternal.neron.neroNumber == gene.childID) { //<< If connection is one referenced by the gene
+                            if (!conToInternals.contains(conToInternal)) {
+                                conToInternals.add(conToInternal);
+                                break;
+                            }
+                        }
                     }
-
-
                 }
-
-
-
-
-
-
-
-
-
-
             }
-//            neuralNet.sensoryNeros.values()
-//                    .stream()
-//                    .map(s -> s.connectionsToInternalNerons)
-//                    .forEach(conToInternals -> { //For each connection to internal
-//                    });
         }
-
 
         ////////// Mutate the genes ////////////
 
