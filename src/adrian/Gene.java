@@ -45,6 +45,9 @@ public class Gene implements Cloneable {
         switch(mutationCode){
             case 0:
                 isSensory = !isSensory;
+                if(isSensory ? (parentID >= numberOfSensoryNeurons) : (parentID >= numberOfInternalNeurons) ){ //If parentID is now out of bounds
+                    parentID = (byte)(isSensory ? rand.nextInt(numberOfSensoryNeurons) : rand.nextInt(numberOfInternalNeurons)); //Correct it
+                }
                 break;
             case 1:
                 while(true){
@@ -56,6 +59,9 @@ public class Gene implements Cloneable {
                 break;
             case 2:
                 isAction = !isAction;
+                if(isAction ? (childID >= numberOfActionNeurons) : (childID >= numberOfInternalNeurons)){ //If childID is now out of bounds
+                    childID = (byte)(isAction ? rand.nextInt(numberOfActionNeurons) : rand.nextInt(numberOfInternalNeurons)); //Correct it
+                }
                 break;
             case 3:
                 while(true){
