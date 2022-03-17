@@ -40,8 +40,7 @@ public class Gene implements Cloneable {
         }
     }
 
-    byte mutate(){ //This must actually change something (So it can't be COMPLETELY random)
-        //final byte mutationCode = (byte)rand.nextInt(5);/*<<From 0 to 4*/
+    void mutate(){ //This must actually change something (So it can't be COMPLETELY random)
         byte mutationCode = (byte)rand.nextInt(5);
 
        if(numberOfInternalNeurons == 1) { //Patch for internalNeron's for number of given neron == 1 crash
@@ -100,7 +99,7 @@ public class Gene implements Cloneable {
                 }
                 break;
         }
-        return mutationCode;
+
     }
 
     public final static String separator = "------------------------";

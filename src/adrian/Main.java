@@ -169,56 +169,66 @@ public class Main extends JPanel {
                 numberOfStepsPassed = 0;
 
                 ///////////////////////// Apply the selection criteria /////////////////////////
-                ArrayList<Tuple<Gene[], NeuralNet>> survivingCreaturesGenesAndNeuralNets = new ArrayList<>(numberOfCreatures);
+                ArrayList<Gene[]> survivingCreaturesGenes = new ArrayList<>(numberOfCreatures);
+                ArrayList<NeuralNet> survivingCreaturesNeuralNets = new ArrayList<>(numberOfCreatures);
                 for (short x = 0; x < numberOfSquaresAlongX; x++) {
                     for (short y = 0; y < numberOfSquaresAlongY; y++) {
                         if (creatures[x][y] != null) { //y < (numberOfSquaresAlongY/64) || y > numberOfSquaresAlongY-(numberOfSquaresAlongY/64)
                             if (x > (numberOfSquaresAlongX / 2)) { //genNumber <= 4 ? x > (numberOfSquaresAlong/2) : x < (numberOfSquaresAlongX/2) <<< Right section criteria to left
-                                survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(creatures[x][y].genes, creatures[x][y].neuralNet));
+                                survivingCreaturesGenes.add(creatures[x][y].genes);
+                                survivingCreaturesNeuralNets.add(creatures[x][y].neuralNet);
                             } // x < (numberOfSquaresAlongX/1.5) && x > numberOfSquaresAlongX-(numberOfSquaresAlongX/1.5) && y < (numberOfSquaresAlongY/1.5) && y > numberOfSquaresAlongY-(numberOfSquaresAlongY/1.5) <<< Square criteria
                             creatures[x][y] = null;
                         }
                     }
                 }
+                assert survivingCreaturesGenes.size() == survivingCreaturesNeuralNets.size();
                 ////////////////////////////////////////////////////////////////////////////////
                 if(gensToSkip == 0)
-                    System.out.println("Survivors: " + survivingCreaturesGenesAndNeuralNets.size() + '\n');
+                    System.out.println("Survivors: " + survivingCreaturesGenes.size() + '\n');
 
                 /////////////// Re-populate the world //////////////////
                 //survivingCreaturesGenesAndNeuralNets << Already represents each creature once so add on to it until the
                 //required number of creatures has been reached
 
-                //Note: This method adds mutated networks on (so they do not need to be mutated again by the creature)
-                final int originalSize = survivingCreaturesGenesAndNeuralNets.size();
-                while (survivingCreaturesGenesAndNeuralNets.size() < numberOfCreatures) {
-                    final Tuple<Gene[], NeuralNet> randomElement = survivingCreaturesGenesAndNeuralNets.get(rand.nextInt(originalSize));
+                final short originalSize = (short)survivingCreaturesGenes.size();
+                while (survivingCreaturesGenes.size() < numberOfCreatures) {
                     ////////// Copy gene array //////////
                     Gene[] geneArrayCopy = new Gene[numberOfGenes];
-                    final Gene[] uncopiedGeneArray = randomElement.X;
-
-                    assert uncopiedGeneArray.length == numberOfGenes;
+                    final Gene[] uncopiedGeneArray = survivingCreaturesGenes.get( rand.nextInt(originalSize) );
 
                     for (short x = 0; x < uncopiedGeneArray.length; x++) {
-                        geneArrayCopy[x] = uncopiedGeneArray[x].clone();
-                        if (rand.nextDouble() <= mutationChance) {
+                        geneArrayCopy[x] = uncopiedGeneArray[x].clone(); //Copy each gene in the gene array
+                        if (rand.nextDouble() <= mutationChance) { //Mutate the gene if necessary
                             geneArrayCopy[x].mutate();
                         }
                     }
                     /////////////////////////////////////
-                    survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(geneArrayCopy, new NeuralNet(geneArrayCopy)/*<< Makes a copy of the NeuralNet*/));
+                    survivingCreaturesGenes.add(geneArrayCopy);
+                    survivingCreaturesNeuralNets.add(new NeuralNet(geneArrayCopy)); //<< Makes a copy of the NeuralNet
                 }
-
+                assert survivingCreaturesGenes.size() == survivingCreaturesNeuralNets.size();
                 ////////////////// Actually create the new creatures //////////////////
+
                 ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
-                for (short x = 0; x < originalSize; x++) { //No it can't
-                    final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
-                    newCreatures.add(new Creature(currentElement.X, currentElement.Y, true));
+                for (short x = 0; x<originalSize; x++) { //For first half
+                    boolean aGeneWasMutated=false;
+                    for(final Gene gene : survivingCreaturesGenes.get(x)){
+                        if(rand.nextDouble() <= mutationChance) {
+                            gene.mutate();
+                            aGeneWasMutated = true;
+                        }
+                    }
+                    if(aGeneWasMutated){
+                        newCreatures.add( new Creature(survivingCreaturesGenes.get(x), new NeuralNet(survivingCreaturesGenes.get(x)) ));
+                    }else{
+                        newCreatures.add( new Creature(survivingCreaturesGenes.get(x), survivingCreaturesNeuralNets.get(x)) );
+                    }
                 }
 
-                assert survivingCreaturesGenesAndNeuralNets.size() == numberOfCreatures;
-                for (short x = (short) originalSize; x < numberOfCreatures; x++) {
-                    final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
-                    newCreatures.add(new Creature(currentElement.X, currentElement.Y, false));
+                assert survivingCreaturesGenes.size() == numberOfCreatures;
+                for (short x = originalSize; x < numberOfCreatures; x++) {
+                    newCreatures.add(new Creature(survivingCreaturesGenes.get(x), survivingCreaturesNeuralNets.get(x)));
                 }
                 ///////////////////////////////////////////////////////////////////////
 
