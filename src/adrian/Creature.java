@@ -228,11 +228,23 @@ class Creature {
 
                             }else{ //The connection is a ConToInternal
                                 final ConToInternal conToInternal = connection.X;
+                                final short conToInternalPosInGeneArray = conToInternalAndPosInGeneArray.get(conToInternal);
 
                                 //// Move the connection ////
                                 oldParent.connectionsToInternalNerons.remove(conToInternal);
-                                newParent.connectionsToInternalNerons.add(conToInternal);
+                                // Re-add it properly //
+                                boolean insertedValue=false;
+                                for (short i=0; i<newParent.connectionsToInternalNerons.size(); i++){
+                                    if( conToInternalAndPosInGeneArray.get(newParent.connectionsToInternalNerons.get(i)) > conToInternalPosInGeneArray){
+                                        newParent.connectionsToInternalNerons.add(i, conToInternal);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    newParent.connectionsToInternalNerons.add(conToInternal);
                                 /////////////////////////////
+
                             }
                             /////////////////////////////////////////////////////////////////////////////////
 
@@ -248,19 +260,42 @@ class Creature {
                             ///////// Get the associated connection and move it to its proper place /////////
                             if(connection.Y != null){ //The connection is a ConToAction
                                 final ConToAction conToAction = connection.Y;
+                                final short conToActionPosInGeneArray = conToActionAndPosInGeneArray.get(conToAction);
 
                                 //// Move the connection ////
                                 oldParent.connectionsToActionNerons.remove(conToAction);
-                                newParent.connectionsToActionNerons.add(conToAction);
+                                // Re-add it properly //
+                                boolean insertedValue=false;
+                                for (short i=0; i<newParent.connectionsToActionNerons.size(); i++){
+                                    if( conToActionAndPosInGeneArray.get(newParent.connectionsToActionNerons.get(i)) > conToActionPosInGeneArray){
+                                        newParent.connectionsToActionNerons.add(i, conToAction);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    newParent.connectionsToActionNerons.add(conToAction);
                                 /////////////////////////////
 
                             }else{ //The connection is a ConToInternal
                                 final ConToInternal conToInternal = connection.X;
+                                final short conToInternalPosInGeneArray = conToInternalAndPosInGeneArray.get(conToInternal);
 
                                 //// Move the connection ////
                                 oldParent.connectionsToInternalNerons.remove(conToInternal);
-                                newParent.connectionsToInternalNerons.add(conToInternal);
+                                // Re-add it properly //
+                                boolean insertedValue=false;
+                                for (short i=0; i<newParent.connectionsToInternalNerons.size(); i++){
+                                    if( conToInternalAndPosInGeneArray.get(newParent.connectionsToInternalNerons.get(i)) > conToInternalPosInGeneArray){
+                                        newParent.connectionsToInternalNerons.add(i, conToInternal);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    newParent.connectionsToInternalNerons.add(conToInternal);
                                 /////////////////////////////
+
                             }
                             /////////////////////////////////////////////////////////////////////////////////
 
@@ -283,19 +318,42 @@ class Creature {
                             ///////// Get the associated connection and move it to its proper place /////////
                             if(connection.Y != null){ //The connection is a ConToAction
                                 final ConToAction conToAction = connection.Y;
+                                final short conToActionPosInGeneArray = conToActionAndPosInGeneArray.get(conToAction);
 
                                 //// Move the connection ////
                                 oldParent.connectionsToActionNerons.remove(conToAction);
-                                newParent.connectionsToActionNerons.add(conToAction);
+                                // Re-add it properly //
+                                boolean insertedValue=false;
+                                for (short i=0; i<newParent.connectionsToActionNerons.size(); i++){
+                                    if( conToActionAndPosInGeneArray.get(newParent.connectionsToActionNerons.get(i)) > conToActionPosInGeneArray){
+                                        newParent.connectionsToActionNerons.add(i, conToAction);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    newParent.connectionsToActionNerons.add(conToAction);
                                 /////////////////////////////
 
                             }else{ //The connection is a ConToInternal
                                 final ConToInternal conToInternal = connection.X;
+                                final short conToInternalPosInGeneArray = conToInternalAndPosInGeneArray.get(conToInternal);
 
                                 //// Move the connection ////
                                 oldParent.connectionsToInternalNerons.remove(conToInternal);
-                                newParent.connectionsToInternalNerons.add(conToInternal);
+                                // Re-add it properly //
+                                boolean insertedValue=false;
+                                for (short i=0; i<newParent.connectionsToInternalNerons.size(); i++){
+                                    if( conToInternalAndPosInGeneArray.get(newParent.connectionsToInternalNerons.get(i)) > conToInternalPosInGeneArray){
+                                        newParent.connectionsToInternalNerons.add(i, conToInternal);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    newParent.connectionsToInternalNerons.add(conToInternal);
                                 /////////////////////////////
+
                             }
                             /////////////////////////////////////////////////////////////////////////////////
 
@@ -315,19 +373,42 @@ class Creature {
                             ///////// Get the associated connection and move it to its proper place /////////
                             if(connection.Y != null){ //The connection is a ConToAction
                                 final ConToAction conToAction = connection.Y;
+                                final short conToActionPosInGeneArray = conToActionAndPosInGeneArray.get(conToAction);
 
                                 //// Move the connection ////
                                 oldParent.connectionsToActionNerons.remove(conToAction);
-                                newParent.connectionsToActionNerons.add(conToAction);
+                                // Re-add it properly //
+                                boolean insertedValue=false;
+                                for (short i=0; i<newParent.connectionsToActionNerons.size(); i++){
+                                    if( conToActionAndPosInGeneArray.get(newParent.connectionsToActionNerons.get(i)) > conToActionPosInGeneArray){
+                                        newParent.connectionsToActionNerons.add(i, conToAction);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    newParent.connectionsToActionNerons.add(conToAction);
                                 /////////////////////////////
 
                             }else{ //The connection is a ConToInternal
                                 final ConToInternal conToInternal = connection.X;
+                                final short conToInternalPosInGeneArray = conToInternalAndPosInGeneArray.get(conToInternal);
 
                                 //// Move the connection ////
                                 oldParent.connectionsToInternalNerons.remove(conToInternal);
-                                newParent.connectionsToInternalNerons.add(conToInternal);
+                                // Re-add it properly //
+                                boolean insertedValue=false;
+                                for (short i=0; i<newParent.connectionsToInternalNerons.size(); i++){
+                                    if( conToInternalAndPosInGeneArray.get(newParent.connectionsToInternalNerons.get(i)) > conToInternalPosInGeneArray){
+                                        newParent.connectionsToInternalNerons.add(i, conToInternal);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    newParent.connectionsToInternalNerons.add(conToInternal);
                                 /////////////////////////////
+
                             }
                             /////////////////////////////////////////////////////////////////////////////////
 
