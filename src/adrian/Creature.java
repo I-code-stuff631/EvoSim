@@ -434,12 +434,40 @@ class Creature {
                                 final SensoryNero sensoryNero = parentOfConnection.X;
 
                                 sensoryNero.connectionsToInternalNerons.remove(oldConnection);
-                                sensoryNero.connectionsToActionNerons.add(newConnection);
+
+                                /// Add the new connection properly ///
+                                final short oldConnectionPositionInGeneArray = conToInternalAndPosInGeneArray.get(oldConnection);
+                                boolean insertedValue=false;
+                                for (short i=0; i<sensoryNero.connectionsToActionNerons.size(); i++){
+                                    if( conToActionAndPosInGeneArray.get(sensoryNero.connectionsToActionNerons.get(i)) > oldConnectionPositionInGeneArray){
+                                        sensoryNero.connectionsToActionNerons.add(i, newConnection);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    sensoryNero.connectionsToActionNerons.add(newConnection);
+                                ///////////////////////////////////////
+
                             }else{ //The parent is a internalNeron
                                 final InternalNero internalNero = parentOfConnection.Y;
 
                                 internalNero.connectionsToInternalNerons.remove(oldConnection);
-                                internalNero.connectionsToActionNerons.add(newConnection);
+
+                                /// Add the new connection properly ///
+                                final short oldConnectionPositionInGeneArray = conToInternalAndPosInGeneArray.get(oldConnection);
+                                boolean insertedValue=false;
+                                for (short i=0; i<internalNero.connectionsToActionNerons.size(); i++){
+                                    if( conToActionAndPosInGeneArray.get(internalNero.connectionsToActionNerons.get(i)) > oldConnectionPositionInGeneArray){
+                                        internalNero.connectionsToActionNerons.add(i, newConnection);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    internalNero.connectionsToActionNerons.add(newConnection);
+                                ///////////////////////////////////////
+
                             }
                             /////////////////////////////////////////////////////////////////////////////
 
@@ -462,12 +490,40 @@ class Creature {
                                 final SensoryNero sensoryNero = parentOfConnection.X;
 
                                 sensoryNero.connectionsToActionNerons.remove(oldConnection);
-                                sensoryNero.connectionsToInternalNerons.add(newConnection);
+
+                                /// Add the new connection properly ///
+                                final short oldConnectionPositionInGeneArray = conToActionAndPosInGeneArray.get(oldConnection);
+                                boolean insertedValue=false;
+                                for (short i=0; i<sensoryNero.connectionsToInternalNerons.size(); i++){
+                                    if( conToInternalAndPosInGeneArray.get(sensoryNero.connectionsToInternalNerons.get(i)) > oldConnectionPositionInGeneArray){
+                                        sensoryNero.connectionsToInternalNerons.add(i, newConnection);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    sensoryNero.connectionsToInternalNerons.add(newConnection);
+                                ///////////////////////////////////////
+
                             }else{ //The parent is a internalNeron
                                 final InternalNero internalNero = parentOfConnection.Y;
 
                                 internalNero.connectionsToActionNerons.remove(oldConnection);
-                                internalNero.connectionsToInternalNerons.add(newConnection);
+
+                                /// Add the new connection properly ///
+                                final short oldConnectionPositionInGeneArray = conToActionAndPosInGeneArray.get(oldConnection);
+                                boolean insertedValue=false;
+                                for (short i=0; i<internalNero.connectionsToInternalNerons.size(); i++){
+                                    if( conToInternalAndPosInGeneArray.get(internalNero.connectionsToInternalNerons.get(i)) > oldConnectionPositionInGeneArray){
+                                        internalNero.connectionsToInternalNerons.add(i, newConnection);
+                                        insertedValue = true;
+                                        break;
+                                    }
+                                }
+                                if(!insertedValue)
+                                    internalNero.connectionsToInternalNerons.add(newConnection);
+                                ///////////////////////////////////////
+
                             }
                             /////////////////////////////////////////////////////////////////////////////
 
