@@ -152,18 +152,17 @@ public class Main extends JPanel {
             ArrayList<Tuple<Gene[], NeuralNet>> survivingCreaturesGenesAndNeuralNets = new ArrayList<>(numberOfCreatures);
             for (short x = 0; x < numberOfSquaresAlongX; x++) {
                 for (short y = 0; y < numberOfSquaresAlongY; y++) {
-                    if (creatures[x][y] != null) {
-                        if (genNumber <= 4 ? x > (numberOfSquaresAlongX / 2) : x < (numberOfSquaresAlongX / 2) /*<< The creature is on the right half of the screen*/) {
-                            //survivingCreaturesGenesAndNeuralNets.put(creatures[x][y].genes, creatures[x][y].neuralNet);
+                    if (creatures[x][y] != null) { //y < (numberOfSquaresAlongY/64) || y > numberOfSquaresAlongY-(numberOfSquaresAlongY/64)
+                        if (x > (numberOfSquaresAlongX/2) ) { //genNumber <= 4 ? x > (numberOfSquaresAlong/2) : x < (numberOfSquaresAlongX/2) <<< Right section criteria to left
                             survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(creatures[x][y].genes, creatures[x][y].neuralNet));
-                        }
+                        } // x < (numberOfSquaresAlongX/1.5) && x > numberOfSquaresAlongX-(numberOfSquaresAlongX/1.5) && y < (numberOfSquaresAlongY/1.5) && y > numberOfSquaresAlongY-(numberOfSquaresAlongY/1.5) <<< Square criteria
                         creatures[x][y] = null;
                     }
                 }
             }
             ////////////////////////////////////////////////////////////////////////////////
 
-            System.out.println("\nSurvivors: "+ survivingCreaturesGenesAndNeuralNets.size());
+            System.out.println("Survivors: "+ survivingCreaturesGenesAndNeuralNets.size()+'\n');
 
             /////////////// Re-populate the world //////////////////
             //survivingCreaturesGenesAndNeuralNets << Already represents each creature once so add on to it until the
@@ -191,7 +190,7 @@ public class Main extends JPanel {
 
             ////////////////// Actually create the new creatures //////////////////
             ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
-            for(short x=0; x<originalSize; x++){
+            for(short x=0; x<originalSize; x++){ //No it can't
                 final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
                 newCreatures.add( new Creature(currentElement.X, currentElement.Y, true) );
             }

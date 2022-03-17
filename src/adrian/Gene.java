@@ -108,6 +108,6 @@ public class Gene implements Cloneable {
     public String toString() {
         String parentInfo = "Parent info: " + (isSensory ? "Sensory neron" : "Internal neron") + '('+parentID+')';
         String childInfo = "Child info: " + (isAction ? "Action neron" : "Internal neron") + '('+childID+')';
-        return parentInfo +'\n'+ childInfo +'\n'+ ("Weight: " + weight) +'\n'+ separator;
+        return parentInfo +'\n'+ childInfo +'\n'+ ("Weight: " + weight) /*+'\n'+ super.toString()*/ +'\n'+ separator;
     }
 }

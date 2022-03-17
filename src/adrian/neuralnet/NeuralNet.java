@@ -203,6 +203,7 @@ public class NeuralNet {
         //Call prepare and output on each internal neron
         internalNeros.values().forEach(InternalNero::prepare);
         internalNeros.values().forEach(InternalNero::output);
+        //internalNeros.values().forEach(i -> i.sum = 0); //Set sum to zero
 
     }
 
