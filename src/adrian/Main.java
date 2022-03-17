@@ -97,12 +97,29 @@ public class Main extends JPanel {
             public void keyReleased(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_SPACE) {
                     paused = !paused;
+                }else if(e.getKeyCode() == KeyEvent.VK_UP){
+                    gensToSkip += 100;
+                    System.out.println("Skipping...\n");
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+
+                    if(lastGen != genNumber) {
+                        gensToSkip++;
+                        lastGen = genNumber;
+                    }
+
                 }
             }
         });
 
     }
 
+    private int lastGen=-1;
+    private int gensToSkip;
     private boolean paused;
     /////////
     private int mouseX=-1;
@@ -112,123 +129,131 @@ public class Main extends JPanel {
     public void paint(Graphics g) {
         super.paint(g); //Clears the last frames shit
 
-        if(numberOfStepsPassed < numberOfStepsPerCycle) {
+        do {
+            if (numberOfStepsPassed < numberOfStepsPerCycle) {
 
-            for (short x = 0; x < numberOfSquaresAlongX; x++) {
-                for (short y = 0; y < numberOfSquaresAlongY; y++) {
-                    if (creatures[x][y] != null && !paused) { //Update each creature
-                        creatures[x][y].update();
-                    }
-                }
-            }
-
-            for (short x = 0; x < numberOfSquaresAlongX; x++) {
-                for (short y = 0; y < numberOfSquaresAlongY; y++) {
-                    if (creatures[x][y] != null) {
-                        g.setColor(creatures[x][y].getColor()); //fill(creatures[x][y].c);
-                        g.fillOval(sizeRatio * x, sizeRatio * y, sizeRatio, sizeRatio);
-                        //fill(0);
-                        if(mouseX != -1) {
-                            if (mouseX > (sizeRatio*x) && mouseX < (sizeRatio*x+sizeRatio) && mouseY > (sizeRatio*y) && mouseY < (sizeRatio *y+sizeRatio)) {
-                                System.out.println(Gene.separator);
-                                Arrays.stream(creatures[x][y].genes).forEach(System.out::println);
-                            }
-                        }
-
-
-                    }
-                }
-            }
-            mouseX = -1;
-
-
-            if(!paused) {
-                numberOfStepsPassed++;
-            }
-        }else{ //New generation
-            numberOfStepsPassed = 0;
-
-            ///////////////////////// Apply the selection criteria /////////////////////////
-            ArrayList<Tuple<Gene[], NeuralNet>> survivingCreaturesGenesAndNeuralNets = new ArrayList<>(numberOfCreatures);
-            for (short x = 0; x < numberOfSquaresAlongX; x++) {
-                for (short y = 0; y < numberOfSquaresAlongY; y++) {
-                    if (creatures[x][y] != null) { //y < (numberOfSquaresAlongY/64) || y > numberOfSquaresAlongY-(numberOfSquaresAlongY/64)
-                        if (x > (numberOfSquaresAlongX/2) ) { //genNumber <= 4 ? x > (numberOfSquaresAlong/2) : x < (numberOfSquaresAlongX/2) <<< Right section criteria to left
-                            survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(creatures[x][y].genes, creatures[x][y].neuralNet));
-                        } // x < (numberOfSquaresAlongX/1.5) && x > numberOfSquaresAlongX-(numberOfSquaresAlongX/1.5) && y < (numberOfSquaresAlongY/1.5) && y > numberOfSquaresAlongY-(numberOfSquaresAlongY/1.5) <<< Square criteria
-                        creatures[x][y] = null;
-                    }
-                }
-            }
-            ////////////////////////////////////////////////////////////////////////////////
-
-            System.out.println("Survivors: "+ survivingCreaturesGenesAndNeuralNets.size()+'\n');
-
-            /////////////// Re-populate the world //////////////////
-            //survivingCreaturesGenesAndNeuralNets << Already represents each creature once so add on to it until the
-            //required number of creatures has been reached
-
-            //Note: This method adds mutated networks on (so they do not need to be mutated again by the creature)
-            final int originalSize = survivingCreaturesGenesAndNeuralNets.size();
-            while (survivingCreaturesGenesAndNeuralNets.size() < numberOfCreatures){
-                final Tuple<Gene[], NeuralNet> randomElement = survivingCreaturesGenesAndNeuralNets.get( rand.nextInt(originalSize) );
-                ////////// Copy gene array //////////
-                Gene[] geneArrayCopy = new Gene[numberOfGenes];
-                final Gene[] uncopiedGeneArray = randomElement.X;
-
-                assert uncopiedGeneArray.length == numberOfGenes;
-
-                for(short x=0; x<uncopiedGeneArray.length; x++){
-                    geneArrayCopy[x] = uncopiedGeneArray[x].clone();
-                    if(rand.nextDouble() <= mutationChance) {
-                        geneArrayCopy[x].mutate();
-                    }
-                }
-                /////////////////////////////////////
-                survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(geneArrayCopy, new NeuralNet(geneArrayCopy)/*<< Makes a copy of the NeuralNet*/));
-            }
-
-            ////////////////// Actually create the new creatures //////////////////
-            ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
-            for(short x=0; x<originalSize; x++){ //No it can't
-                final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
-                newCreatures.add( new Creature(currentElement.X, currentElement.Y, true) );
-            }
-
-            assert survivingCreaturesGenesAndNeuralNets.size() == numberOfCreatures;
-            for (short x = (short)originalSize; x<numberOfCreatures; x++){
-                final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
-                newCreatures.add( new Creature(currentElement.X, currentElement.Y, false));
-            }
-            ///////////////////////////////////////////////////////////////////////
-
-            assert newCreatures.size() == numberOfCreatures;
-
-            ///// Add the creatures to the board randomly /////
-            while (newCreatures.size() > 0) {
                 for (short x = 0; x < numberOfSquaresAlongX; x++) {
                     for (short y = 0; y < numberOfSquaresAlongY; y++) {
-                        if ((creatures[x][y] == null) && (intInRange(1, totalNumberOfSquares) <= numberOfCreatures)) {
-                            creatures[x][y] = newCreatures.get(0);
-                            newCreatures.get(0).tellPos(x, y);
-                            newCreatures.remove(0);
-                            if(newCreatures.size() <= 0){
-                                break;
+                        if (creatures[x][y] != null && (!paused || gensToSkip != 0)) { //Update each creature
+                            creatures[x][y].update();
+                        }
+                    }
+                }
+
+                if (gensToSkip == 0) {
+                    for (short x = 0; x < numberOfSquaresAlongX; x++) {
+                        for (short y = 0; y < numberOfSquaresAlongY; y++) {
+                            if (creatures[x][y] != null) {
+                                g.setColor(creatures[x][y].getColor()); //fill(creatures[x][y].c);
+                                g.fillOval(sizeRatio * x, sizeRatio * y, sizeRatio, sizeRatio);
+                                //fill(0);
+                                if (mouseX != -1) {
+                                    if (mouseX > (sizeRatio * x) && mouseX < (sizeRatio * x + sizeRatio) && mouseY > (sizeRatio * y) && mouseY < (sizeRatio * y + sizeRatio)) {
+                                        System.out.println(Gene.separator);
+                                        Arrays.stream(creatures[x][y].genes).forEach(System.out::println);
+                                    }
+                                }
+
+
                             }
+                        }
+                    }
+                    mouseX = -1;
+                }
+
+
+                if (!paused || gensToSkip != 0) {
+                    numberOfStepsPassed++;
+                }
+            } else { //New generation
+                numberOfStepsPassed = 0;
+
+                ///////////////////////// Apply the selection criteria /////////////////////////
+                ArrayList<Tuple<Gene[], NeuralNet>> survivingCreaturesGenesAndNeuralNets = new ArrayList<>(numberOfCreatures);
+                for (short x = 0; x < numberOfSquaresAlongX; x++) {
+                    for (short y = 0; y < numberOfSquaresAlongY; y++) {
+                        if (creatures[x][y] != null) { //y < (numberOfSquaresAlongY/64) || y > numberOfSquaresAlongY-(numberOfSquaresAlongY/64)
+                            if (x > (numberOfSquaresAlongX / 2)) { //genNumber <= 4 ? x > (numberOfSquaresAlong/2) : x < (numberOfSquaresAlongX/2) <<< Right section criteria to left
+                                survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(creatures[x][y].genes, creatures[x][y].neuralNet));
+                            } // x < (numberOfSquaresAlongX/1.5) && x > numberOfSquaresAlongX-(numberOfSquaresAlongX/1.5) && y < (numberOfSquaresAlongY/1.5) && y > numberOfSquaresAlongY-(numberOfSquaresAlongY/1.5) <<< Square criteria
+                            creatures[x][y] = null;
+                        }
+                    }
+                }
+                ////////////////////////////////////////////////////////////////////////////////
+                if(gensToSkip == 0)
+                    System.out.println("Survivors: " + survivingCreaturesGenesAndNeuralNets.size() + '\n');
+
+                /////////////// Re-populate the world //////////////////
+                //survivingCreaturesGenesAndNeuralNets << Already represents each creature once so add on to it until the
+                //required number of creatures has been reached
+
+                //Note: This method adds mutated networks on (so they do not need to be mutated again by the creature)
+                final int originalSize = survivingCreaturesGenesAndNeuralNets.size();
+                while (survivingCreaturesGenesAndNeuralNets.size() < numberOfCreatures) {
+                    final Tuple<Gene[], NeuralNet> randomElement = survivingCreaturesGenesAndNeuralNets.get(rand.nextInt(originalSize));
+                    ////////// Copy gene array //////////
+                    Gene[] geneArrayCopy = new Gene[numberOfGenes];
+                    final Gene[] uncopiedGeneArray = randomElement.X;
+
+                    assert uncopiedGeneArray.length == numberOfGenes;
+
+                    for (short x = 0; x < uncopiedGeneArray.length; x++) {
+                        geneArrayCopy[x] = uncopiedGeneArray[x].clone();
+                        if (rand.nextDouble() <= mutationChance) {
+                            geneArrayCopy[x].mutate();
+                        }
+                    }
+                    /////////////////////////////////////
+                    survivingCreaturesGenesAndNeuralNets.add(new Tuple<>(geneArrayCopy, new NeuralNet(geneArrayCopy)/*<< Makes a copy of the NeuralNet*/));
+                }
+
+                ////////////////// Actually create the new creatures //////////////////
+                ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
+                for (short x = 0; x < originalSize; x++) { //No it can't
+                    final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
+                    newCreatures.add(new Creature(currentElement.X, currentElement.Y, true));
+                }
+
+                assert survivingCreaturesGenesAndNeuralNets.size() == numberOfCreatures;
+                for (short x = (short) originalSize; x < numberOfCreatures; x++) {
+                    final Tuple<Gene[], NeuralNet> currentElement = survivingCreaturesGenesAndNeuralNets.get(x);
+                    newCreatures.add(new Creature(currentElement.X, currentElement.Y, false));
+                }
+                ///////////////////////////////////////////////////////////////////////
+
+                assert newCreatures.size() == numberOfCreatures;
+
+                ///// Add the creatures to the board randomly /////
+                while (newCreatures.size() > 0) {
+                    for (short x = 0; x < numberOfSquaresAlongX; x++) {
+                        for (short y = 0; y < numberOfSquaresAlongY; y++) {
+                            if ((creatures[x][y] == null) && (intInRange(1, totalNumberOfSquares) <= numberOfCreatures)) {
+                                creatures[x][y] = newCreatures.get(0);
+                                newCreatures.get(0).tellPos(x, y);
+                                newCreatures.remove(0);
+                                if (newCreatures.size() <= 0) {
+                                    break;
+                                }
+                            }
+
+                        }
+                        if (newCreatures.size() <= 0) {
+                            break;
                         }
 
                     }
-                    if(newCreatures.size() <= 0){
-                        break;
-                    }
-
                 }
-            }
-            ///////////////////////////////////////////////////
+                ///////////////////////////////////////////////////
 
-            genNumber++;
-            System.out.println("Generation: " + genNumber);
-        }
+                genNumber++;
+                if(gensToSkip > 0)
+                    gensToSkip--;
+
+                if(gensToSkip == 0)
+                    System.out.println("Generation: " + genNumber);
+            }
+        }while (gensToSkip > 0);
 
 
 
