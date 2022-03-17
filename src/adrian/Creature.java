@@ -8,10 +8,7 @@ import adrian.neuralnet.neurons.InternalNero;
 import adrian.neuralnet.neurons.SensoryNero;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static adrian.Main.*;
 
@@ -49,6 +46,72 @@ class Creature {
                     genesToMutate.add(gene);
                 }
             }
+
+            /////////////////////// Get all the connections position in gene array /////////////////////////
+            final int hashMapLeng = (int)Math.ceil(genes.length/2f);
+            HashMap<ConToInternal, Short> conToInternalAndPosInGeneArray = new HashMap<>(hashMapLeng);
+            HashMap<ConToAction, Short> conToActionAndPosInGeneArray = new HashMap<>(hashMapLeng);
+
+            for (short x=0; x<genes.length; x++) {
+                //Get all connections referenced by the genes
+                if (genes[x].isSensory) { //Parent is sensoryNeron
+                    final SensoryNero parentOfConnection = neuralNet.sensoryNeros.get(genes[x].parentID); //This should never be null
+
+                    if (genes[x].isAction) { //Child is actionNeron
+                        for (final ConToAction conToAction : parentOfConnection.connectionsToActionNerons) {
+                            if (conToAction.neron.actionID == genes[x].childID && conToAction.weight == genes[x].weight) {
+                                //^^ If connection is one referenced by the gene ^^
+                                if (!conToActionAndPosInGeneArray.containsKey(conToAction)) {
+                                    conToActionAndPosInGeneArray.put(conToAction, x);
+                                    break;
+                                }
+
+                            }
+                        }
+                    } else { //Child is internalNeron
+                        for (final ConToInternal conToInternal : parentOfConnection.connectionsToInternalNerons) {
+                            if (conToInternal.neron.neroNumber == genes[x].childID && conToInternal.weight == genes[x].weight) {
+                                //^^ If connection is one referenced by the gene ^^
+                                if (!conToInternalAndPosInGeneArray.containsKey(conToInternal)) {
+                                    conToInternalAndPosInGeneArray.put(conToInternal, x);
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                } else { //Parent is internalNeron
+                    final InternalNero parentOfConnection = neuralNet.internalNeros.get(genes[x].parentID);
+
+                    if (genes[x].isAction) { //Child is actionNeron
+                        for (final ConToAction conToAction : parentOfConnection.connectionsToActionNerons) {
+                            if (conToAction.neron.actionID == genes[x].childID && conToAction.weight == genes[x].weight) {
+                                //^^ If connection is one referenced by the gene ^^
+                                if (!conToActionAndPosInGeneArray.containsKey(conToAction)) {
+                                    conToActionAndPosInGeneArray.put(conToAction, x);
+                                    break;
+                                }
+
+                            }
+                        }
+                    } else { //Child is internalNeron
+                        for (final ConToInternal conToInternal : parentOfConnection.connectionsToInternalNerons) {
+                            if (conToInternal.neron.neroNumber == genes[x].childID && conToInternal.weight == genes[x].weight) {
+                                //^^ If connection is one referenced by the gene ^^
+                                if (!conToInternalAndPosInGeneArray.containsKey(conToInternal)) {
+                                    conToInternalAndPosInGeneArray.put(conToInternal, x);
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            assert conToActionAndPosInGeneArray.size()+conToInternalAndPosInGeneArray.size() == genes.length;
+            ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
             /////////////////////// Get the connections associated with the genes to be mutated /////////////////////////
             ArrayList<Tuple<ConToInternal, ConToAction>> connections = new ArrayList<>(genesToMutate.size());
