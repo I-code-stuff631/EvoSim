@@ -22,11 +22,9 @@ public class Gene implements Cloneable {
     }
 
     Gene(){ //Make a random gene
-        isSensory = rand.nextBoolean();
-        parentID = (byte)(isSensory ? rand.nextInt(numberOfSensoryNeurons) : rand.nextInt(numberOfInternalNeurons));
+        randomizeParent();
         ////
-        isAction = rand.nextBoolean();
-        childID = (byte)(isAction ? rand.nextInt(numberOfActionNeurons) : rand.nextInt(numberOfInternalNeurons));
+        randomizeChild();
         ////
         weight = (float)(rand.nextFloat()-.5)*8;
     }
@@ -41,65 +39,50 @@ public class Gene implements Cloneable {
     }
 
     void mutate(){ //This must actually change something (So it can't be COMPLETELY random)
-        byte mutationCode = (byte)rand.nextInt(5);
-
-       if(numberOfInternalNeurons == 1) { //Patch for internalNeron's for number of given neron == 1 crash
-
-           if (!isAction && !isSensory) {
-               while (mutationCode == 1 || mutationCode == 3) {
-                   mutationCode = (byte) rand.nextInt(5);
-               }
-           }else if(!isAction){
-               while (mutationCode == 3) {
-                   mutationCode = (byte) rand.nextInt(5);
-               }
-           }else if(!isSensory){
-               while (mutationCode == 1) {
-                   mutationCode = (byte) rand.nextInt(5);
-               }
-           }
-
-       }
-
-        switch(mutationCode){
-            case 0:
-                isSensory = !isSensory;
-                if(isSensory ? (parentID >= numberOfSensoryNeurons) : (parentID >= numberOfInternalNeurons) ){ //If parentID is now out of bounds
-                    parentID = (byte)(isSensory ? rand.nextInt(numberOfSensoryNeurons) : rand.nextInt(numberOfInternalNeurons)); //Correct it
-                }
-                break;
-            case 1:
-                while(true){
-                    final byte randomParentNeron = (byte)(isSensory ? rand.nextInt(numberOfSensoryNeurons) : rand.nextInt(numberOfInternalNeurons));
-                    if(randomParentNeron != parentID){
-                        break;
-                    }
-                }
-                break;
-            case 2:
-                isAction = !isAction;
-                if(isAction ? (childID >= numberOfActionNeurons) : (childID >= numberOfInternalNeurons)){ //If childID is now out of bounds
-                    childID = (byte)(isAction ? rand.nextInt(numberOfActionNeurons) : rand.nextInt(numberOfInternalNeurons)); //Correct it
-                }
-                break;
-            case 3:
-                while(true){
-                    final byte randomChildNeron = (byte)(isAction ? rand.nextInt(numberOfActionNeurons) : rand.nextInt(numberOfInternalNeurons));
-                    if(randomChildNeron != parentID){
-                        break;
-                    }
-                }
-                break;
-            case 4:
-                while(true) {
-                    final float randomWeight = (float)(rand.nextFloat()-.5)*8;
-                    if(randomWeight != weight){
-                        break;
-                    }
-                }
-                break;
+        if(rand.nextBoolean()){
+            if(rand.nextBoolean()){ //Randomize parent
+                final boolean oldIsSensoryValue = isSensory;
+                final byte oldParentIDValue = parentID;
+                do {
+                    randomizeParent();
+                }while (oldIsSensoryValue == isSensory && oldParentIDValue == parentID);
+            }else{ //Randomize child
+                final boolean oldIsActionValue = isAction;
+                final byte oldChildIDValue = childID;
+                do {
+                    randomizeChild();
+                }while (oldIsActionValue == isAction && oldChildIDValue == childID);
+            }
+        }else{ //Randomize weight
+            final float oldWeight = weight;
+            do{
+                weight = (float)(rand.nextFloat()-.5)*8;
+            }while(weight == oldWeight);
         }
+    }
 
+    private void randomizeParent(){
+        if(intInRange(1, numberOfSensoryNeurons+numberOfInternalNeurons) <= numberOfSensoryNeurons){
+            //Make the parent a sensoryNero
+            isSensory = true;
+            parentID = (byte) rand.nextInt(numberOfSensoryNeurons);
+        }else{
+            //Make the parent a internalNero
+            isSensory = false;
+            parentID = (byte) rand.nextInt(numberOfInternalNeurons);
+        }
+    }
+
+    private void randomizeChild(){
+        if(intInRange(1, numberOfActionNeurons+numberOfInternalNeurons) <= numberOfInternalNeurons){
+            //Make the child a internalNero
+            isAction = false;
+            childID = (byte) rand.nextInt(numberOfInternalNeurons);
+        }else{
+            //Make the child actionNero
+            isAction = true;
+            childID = (byte) rand.nextInt(numberOfActionNeurons);
+        }
     }
 
     public final static String separator = "------------------------";

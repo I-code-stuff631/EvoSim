@@ -195,6 +195,12 @@ public class NeuralNet {
                     sensoryNero.produce((float) (.5 * Math.sin(numberOfStepsPassed * ((Math.PI * 2) / cosPeriod)) + .5));
                     break;
                 ///////////////////////////
+                case 17: //How far from the center you are (at border produces 1 directly in the middle produces 0)
+                    sensoryNero.produce((presentDistanceFromMiddleAlongX+presentDistanceFromMiddleAlongY)/2);
+                    break;
+                case 18: //How close to the center you are (opposite behavior from case 17)
+                    sensoryNero.produce(((1f-presentDistanceFromMiddleAlongX)+(1f-presentDistanceFromMiddleAlongY))/2);
+
             }
         }
 

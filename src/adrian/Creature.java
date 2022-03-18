@@ -16,7 +16,7 @@ class Creature {
     short x=Short.MIN_VALUE;
     short y;
     private Color c;
-    NeuralNet neuralNet;
+    final NeuralNet neuralNet;
     Gene[] genes = new Gene[numberOfGenes];
     ///Action neron controlled variables///
     //private byte sinPeriod=30;

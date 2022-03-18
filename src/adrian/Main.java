@@ -15,7 +15,7 @@ public class Main extends JPanel {
     /////// Options ///////
     final static short numberOfCreatures = 10;
     public static final short numberOfGenes/*numberOfConnections*/ = 4;
-    public static final short numberOfSensoryNeurons = 17;
+    public static final short numberOfSensoryNeurons = 19;
     public static final short numberOfInternalNeurons = 1;
     public static final short numberOfActionNeurons = 9/*< For moving*/+2/*< Oscillator period controllers*/;
     final static double mutationChance = 0.001;
@@ -174,7 +174,8 @@ public class Main extends JPanel {
                 for (short x = 0; x < numberOfSquaresAlongX; x++) {
                     for (short y = 0; y < numberOfSquaresAlongY; y++) {
                         if (creatures[x][y] != null) { //y < (numberOfSquaresAlongY/64) || y > numberOfSquaresAlongY-(numberOfSquaresAlongY/64)
-                            if (x > (numberOfSquaresAlongX / 2)) { //genNumber <= 4 ? x > (numberOfSquaresAlong/2) : x < (numberOfSquaresAlongX/2) <<< Right section criteria to left
+                            if (x < (numberOfSquaresAlongX/1.5) && x > numberOfSquaresAlongX-(numberOfSquaresAlongX/1.5) &&
+                                    y < (numberOfSquaresAlongY/1.5) && y > numberOfSquaresAlongY-(numberOfSquaresAlongY/1.5)) { //genNumber <= 4 ? x > (numberOfSquaresAlong/2) : x < (numberOfSquaresAlongX/2) <<< Right section criteria to left
                                 survivingCreaturesGenes.add(creatures[x][y].genes);
                                 survivingCreaturesNeuralNets.add(creatures[x][y].neuralNet);
                             } // x < (numberOfSquaresAlongX/1.5) && x > numberOfSquaresAlongX-(numberOfSquaresAlongX/1.5) && y < (numberOfSquaresAlongY/1.5) && y > numberOfSquaresAlongY-(numberOfSquaresAlongY/1.5) <<< Square criteria
@@ -222,6 +223,9 @@ public class Main extends JPanel {
                     if(aGeneWasMutated){
                         newCreatures.add( new Creature(survivingCreaturesGenes.get(x), new NeuralNet(survivingCreaturesGenes.get(x)) ));
                     }else{
+                        //survivingCreaturesNeuralNets.get(x).actionNeros.values().stream().map(a -> a.sum).forEach(System.out::println);
+                        survivingCreaturesNeuralNets.get(x).actionNeros.values().forEach(actionNero -> actionNero.sum = 0);
+                        survivingCreaturesNeuralNets.get(x).internalNeros.values().forEach(internalNero -> internalNero.sum = 0);
                         newCreatures.add( new Creature(survivingCreaturesGenes.get(x), survivingCreaturesNeuralNets.get(x)) );
                     }
                 }
