@@ -1,6 +1,5 @@
 package adrian.neuralnet.neurons;
 
-import adrian.Gene;
 import adrian.neuralnet.connections.ConToAction;
 import adrian.neuralnet.connections.ConToInternal;
 

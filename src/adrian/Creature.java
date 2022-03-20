@@ -44,9 +44,6 @@ class Creature {
     }
 
     public void tellPos(final short x, final short y){
-        assert x >= 0 && y >= 0; //The pos is valid
-        assert this.x == Short.MIN_VALUE; //The creature does not already know its pos (or this method has not already been called)
-        ////////
         this.x = x;
         this.y = y;
     }
@@ -100,8 +97,6 @@ class Creature {
     }
 
     private void setColor(){
-        assert genes[0] != null; //Make sure the genes are not unset when this is called
-
         /// Set the color based on the genes ///
         double red=0;
         double firstScalingConstant/*Clamps the number between 0 and 127*/= (127d/numberOfSensoryNeurons);
@@ -127,7 +122,7 @@ class Creature {
         blue /= genes.length; //Average blue
 
         double green=0;
-        firstScalingConstant = (127/8d);
+        firstScalingConstant = (255/8d);
         for(Gene gene : genes) {
             green += (gene.weight+4)*firstScalingConstant;
         }

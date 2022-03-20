@@ -8,6 +8,7 @@ public class ActionNero {
     // the ID in the neron.
     public float sum;
 
+
     public ActionNero(final byte neroNumber){
         this.actionID = neroNumber;
     }
@@ -16,9 +17,11 @@ public class ActionNero {
         sum += addAmount;
     }
 
-    public float fireProbability(){ //Could and also should be seen as output
+    public float output(){ //Could and also should be seen as output
         return (float)Math.tanh(sum);
     }
+
+
 
     public boolean fires(){
         final float fireProbability = (float)Math.tanh(sum);
@@ -32,9 +35,7 @@ public class ActionNero {
             }
         }
 
-
     }
-
 
 
 }

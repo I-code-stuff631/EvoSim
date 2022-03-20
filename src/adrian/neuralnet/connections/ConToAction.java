@@ -13,11 +13,6 @@ public class ConToAction {
       this.neron = childNeron;
     }
 
-    /*public ConToAction(final ActionNero neron){
-        this.neron = neron;
-        weight = (float)(Math.nextUp(rand.nextFloat())-.5)*8; //Generate a random weight
-    }*/
-
     public void send(final float /*rawOutput*/rawInput){
         neron.addToSum( weight*rawInput );
     }

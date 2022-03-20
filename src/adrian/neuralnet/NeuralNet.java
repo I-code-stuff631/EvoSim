@@ -104,13 +104,13 @@ public class NeuralNet {
         double sinPeriod = defaultSinPeriod;
         ActionNero sinPeriodController = actionNeros.get((byte)9);
         if(sinPeriodController != null){
-            sinPeriod = ( (defaultSinPeriod-0.01) * sinPeriodController.fireProbability()); //Sin period can at min be 0.01
+            sinPeriod = ( (defaultSinPeriod-0.01) * sinPeriodController.output()); //Sin period can at min be 0.01
         }
 
         double cosPeriod = defaultCosPeriod;
         ActionNero cosPeriodController = actionNeros.get((byte)10);
         if(cosPeriodController != null){
-            cosPeriod = ( (defaultCosPeriod-0.01) * cosPeriodController.fireProbability()); //Cos period can at min be 0.01
+            cosPeriod = ( (defaultCosPeriod-0.01) * cosPeriodController.output()); //Cos period can at min be 0.01
         }
         //////////////////////////////////////////////////////////////
 
@@ -223,10 +223,9 @@ public class NeuralNet {
                 }
             }
         });
-        assert possibleMoveActionNeros.size() <= 9;
 
         //////// Sort all the action nerons in possibleMoveNerons by probability (greatest first) ////////
-        possibleMoveActionNeros.sort(Comparator.comparing(ActionNero::fireProbability).reversed());
+        possibleMoveActionNeros.sort(Comparator.comparing(ActionNero::output).reversed());
         //If you get errors check this is sorting right ^^
 
         ////////////// Try moving with each possible neron in order //////////////

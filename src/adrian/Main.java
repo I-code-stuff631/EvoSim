@@ -13,11 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Main extends JPanel {
     /////// Options ///////
-    final static short numberOfCreatures = 10;
-    public static final short numberOfGenes/*numberOfConnections*/ = 4;
-    public static final short numberOfSensoryNeurons = 19;
+    final static short numberOfCreatures = 100;
+    public static final short numberOfGenes/*numberOfConnections*/ = 30;
     public static final short numberOfInternalNeurons = 1;
-    public static final short numberOfActionNeurons = 9/*< For moving*/+2/*< Oscillator period controllers*/;
     final static double mutationChance = 0.001;
     public static final short numberOfStepsPerCycle = 300;
     private static final short frameRate = 24;
@@ -28,21 +26,24 @@ public class Main extends JPanel {
     public static final byte defaultCosPeriod = 60;
     ///////////////////////
 
+    ///// Semi-options /////
+    public static final short numberOfSensoryNeurons = 19;
+    //The number of sensory neurons can not be greater than 128
+    public static final short numberOfActionNeurons = 11; //9 for moving, 2 oscillator period controllers
+    //The number of action neurons can not be greater than 128
+    ////////////////////////
+
     private final static short sizeRatio = (short) Math.pow(2, sizeOfGrid);
     public final static short /*widthDevSizeRatio*/numberOfSquaresAlongX = (short) (width / sizeRatio);
     public final static short /*heightDevSizeRatio*/numberOfSquaresAlongY = (short) (height / sizeRatio);
     private final static short totalNumberOfSquares = (short)(numberOfSquaresAlongX*numberOfSquaresAlongY);
-    public final static Random rand = new Random();//new Random(1110236400L); //ThreadLocalRandom rand = ThreadLocalRandom.current();
+    public final static Random rand = new Random(1110236400L); //ThreadLocalRandom rand = ThreadLocalRandom.current();
     public static short numberOfStepsPassed;
-    private static final short sizeRatioDev2 = (short) (sizeRatio/2);
     private static short genNumber;
 
     public static Creature[][] creatures = new Creature[numberOfSquaresAlongX][numberOfSquaresAlongY];
 
     public static void main(String[] args) {
-        assert (numberOfSensoryNeurons <= 128) && (numberOfSensoryNeurons >= 1);
-        assert (numberOfActionNeurons <= 128) && (numberOfActionNeurons >= 1);
-
         if(numberOfCreatures >= totalNumberOfSquares){
             System.out.println("Total number of creatures is more than or equal to the total number of squares!");
             System.exit(0);
@@ -183,7 +184,6 @@ public class Main extends JPanel {
                         }
                     }
                 }
-                assert survivingCreaturesGenes.size() == survivingCreaturesNeuralNets.size();
                 ////////////////////////////////////////////////////////////////////////////////
                 if(gensToSkip == 0)
                     System.out.println("Survivors: " + survivingCreaturesGenes.size() + '\n');
@@ -208,7 +208,6 @@ public class Main extends JPanel {
                     survivingCreaturesGenes.add(geneArrayCopy);
                     survivingCreaturesNeuralNets.add(new NeuralNet(geneArrayCopy)); //<< Makes a copy of the NeuralNet
                 }
-                assert survivingCreaturesGenes.size() == survivingCreaturesNeuralNets.size();
                 ////////////////// Actually create the new creatures //////////////////
 
                 ArrayList<Creature> newCreatures = new ArrayList<>(numberOfCreatures);
@@ -230,13 +229,11 @@ public class Main extends JPanel {
                     }
                 }
 
-                assert survivingCreaturesGenes.size() == numberOfCreatures;
                 for (short x = originalSize; x < numberOfCreatures; x++) {
                     newCreatures.add(new Creature(survivingCreaturesGenes.get(x), survivingCreaturesNeuralNets.get(x)));
                 }
                 ///////////////////////////////////////////////////////////////////////
 
-                assert newCreatures.size() == numberOfCreatures;
 
                 ///// Add the creatures to the board randomly /////
                 while (newCreatures.size() > 0) {

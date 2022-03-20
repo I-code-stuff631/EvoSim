@@ -6,11 +6,11 @@ import adrian.neuralnet.connections.ConToInternal;
 import java.util.ArrayList;
 
 public class InternalNero {
-    //byte neroNumber; Use the pos in the array as the number, the actual identifier should be unnecessary
-    final public byte neroNumber;
+    public final byte neroNumber;
     public float sum;
+    private float preCalculatedTanh;
 
-    public ArrayList<ConToInternal> connectionsToInternalNerons = new ArrayList<>();
+    public ArrayList<ConToInternal> connectionsToInternalNerons = new ArrayList<>(); //Find the optimal size for these
     public ArrayList<ConToAction> connectionsToActionNerons = new ArrayList<>();
 
     public InternalNero(final byte neroNumber){
@@ -19,32 +19,24 @@ public class InternalNero {
 
     public void addToSum(final float addAmount){
         sum += addAmount;
+        preCalculatedTanh = (float)Math.tanh(sum); //Re-calculate the value of the tanh with the new sum
     }
 
+    //////////////// Methods to update the neuralNeural network ////////////////
     public void prepare(){ //This would be called from outside (Before output)
-        //////////// Call all connections that loopback to this neron ////////////
-        float tmpSum = sum;
-        for(final ConToInternal connectionToInternalNeron : connectionsToInternalNerons){
-            if(connectionToInternalNeron.neron == this){
-                connectionToInternalNeron.send( (float)Math.tanh(tmpSum) );
-            }
+        for (final ConToInternal conToInternal : connectionsToInternalNerons){ //Call all connections to internal neurons
+            conToInternal.send(preCalculatedTanh);
         }
-        ///////////// Call all other internal neron connections /////////////
-        for(final ConToInternal connectionToInternalNeron : connectionsToInternalNerons){
-            if(connectionToInternalNeron.neron != this){
-                connectionToInternalNeron.send( (float)Math.tanh(sum) );
-            }
-        }
-        /////////////////////////////////////////////////////////////////////
 
     }
 
     public void output(){ //This would be called from outside (After prepare)
-        for(final ConToAction connectionToActionNeron : connectionsToActionNerons){
-            connectionToActionNeron.send( (float)Math.tanh(sum) );
+        for(final ConToAction connectionToActionNeron : connectionsToActionNerons){ //Call all connections to action neurons
+            connectionToActionNeron.send(preCalculatedTanh);
         }
-    }
 
+    }
+    ////////////////////////////////////////////////////////////////////////////
 
     ////// Adder methods //////
     public void addConnection(final ConToInternal conToAdd){
